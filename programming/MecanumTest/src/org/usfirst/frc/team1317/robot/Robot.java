@@ -43,11 +43,14 @@ public class Robot extends IterativeRobot {
 	//1 is mecanum with one joystick. Twisting the joystick turns the robot.
 	//2 is tank drive.
 	byte driveMode;
+	Boolean throttleOn;
 	
 	//variable to hold what buttons are just recently pushed.
 	Boolean oldMode0ButtonState;
 	Boolean oldMode1ButtonState;
 	Boolean oldMode2ButtonState;
+	
+	Boolean oldButton2State;
 	
 	//object to control the drivetrain.
 	RobotDrive Drivetrain;
@@ -81,6 +84,8 @@ public class Robot extends IterativeRobot {
 		oldMode0ButtonState=false;
 		oldMode1ButtonState=false;
 		oldMode2ButtonState=false;
+		throttleOn= true;
+		oldButton2State = false;
 	}
 
 	/**
@@ -127,34 +132,51 @@ public class Robot extends IterativeRobot {
 		Boolean currentMode0ButtonState = MoveJoystick.getRawButton(3);
 		Boolean currentMode1ButtonState = MoveJoystick.getRawButton(4);
 		Boolean currentMode2ButtonState = MoveJoystick.getRawButton(5);
+		Boolean currentButton2State = MoveJoystick.getRawButton(2);
 		//If the button to turn on mode 0 is pressed, but wasn't before (i.e. just pressed)
-		if (currentMode0ButtonState == true && currentMode0ButtonState == false)
+		if (currentButton2State == true && oldButton2State ==false)
+		{
+			throttleOn = !throttleOn; 
+		}
+		
+		double speedMultiplier;
+		
+		if(throttleOn)
+		{
+			double throttle = -MoveJoystick.getThrottle();
+			speedMultiplier = 0.45*throttle+0.55;
+		}
+		else
+			speedMultiplier = 1;
+		
+		if (currentMode0ButtonState == true)
 			//switch to mode 0 (two joystick mecanum)
 			driveMode = 0;
 		//If the button to turn on mode 1 is pressed, but wasn't before
-		else if (currentMode1ButtonState == true && currentMode1ButtonState == false)
+		else if (currentMode1ButtonState == true)
 			//switch to mode 1 (one joystick mecanum)
 			driveMode = 1;
 		//If the button to turn on mode 1 is pressed, but wasn't before
-		else if (currentMode2ButtonState == true && currentMode2ButtonState == false)
+		else if (currentMode2ButtonState == true)
 			//switch mode 2 
 			driveMode = 2;
 		if(driveMode == 0) {
 			//use one joystick to move the robot forward and sideways. Move the other joystick sideways to turn
-			Drivetrain.mecanumDrive_Cartesian(MoveJoystick.getX(), MoveJoystick.getY(), TurnJoystick.getX(), 0);
+			Drivetrain.mecanumDrive_Cartesian(speedMultiplier*MoveJoystick.getX(), speedMultiplier*MoveJoystick.getY(), speedMultiplier*TurnJoystick.getX(), 0);
 		}
 		else if (driveMode == 1){
 			//use one joystick to move the robot. Forward, backward, and side to side move the robot in that direction
 			//twisting the joystick makes the robot twist
-			Drivetrain.mecanumDrive_Cartesian(MoveJoystick.getX(), MoveJoystick.getY(), MoveJoystick.getTwist(), 0);
+			Drivetrain.mecanumDrive_Cartesian(speedMultiplier*MoveJoystick.getX(), speedMultiplier*MoveJoystick.getY(), speedMultiplier*MoveJoystick.getTwist(), 0);
 		}
 		else {
 			//drive the robot with tank drive. Use one joystick to control the left motor and one to control the right motor.
-			Drivetrain.tankDrive(MoveJoystick.getY(), TurnJoystick.getY());
+			Drivetrain.tankDrive(speedMultiplier*MoveJoystick.getY(), speedMultiplier*TurnJoystick.getY());
 		}
 		oldMode0ButtonState = currentMode0ButtonState;
 		oldMode1ButtonState = currentMode1ButtonState;
 		oldMode2ButtonState = currentMode1ButtonState;
+		oldButton2State = currentButton2State;
 	}
 
 	/**
