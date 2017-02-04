@@ -1,5 +1,6 @@
 package org.usfirst.frc.team1317.robot.components;
 import edu.wpi.first.wpilibj.*;
+import org.usfirst.frc.team1317.robot.*;
 public class GearMechanism implements RobotComponent {
 
 	Solenoid DoorOpener;
@@ -10,8 +11,8 @@ public class GearMechanism implements RobotComponent {
 	
 	public GearMechanism(Joystick j)
 	{
-		DoorOpener = new Solenoid(1);
-		GearPusher = new DoubleSolenoid(3,4);
+		DoorOpener = new Solenoid(RobotPorts.DoorSolenoidPort);
+		GearPusher = new DoubleSolenoid(RobotPorts.PusherSolenoidPort1,RobotPorts.PusherSolenoidPort2);
 		control = j;
 	}
 	
