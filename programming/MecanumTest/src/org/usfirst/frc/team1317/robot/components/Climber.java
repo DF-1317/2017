@@ -1,6 +1,7 @@
 package org.usfirst.frc.team1317.robot.components;
 import edu.wpi.first.wpilibj.*;
 import org.usfirst.frc.team1317.robot.*;
+import com.ctre.*;
 /**
  * This code represents the Climber on the robot
  * This code will most likely be changed such that buttons will be used instead of a joystick
@@ -9,14 +10,14 @@ import org.usfirst.frc.team1317.robot.*;
 public class Climber implements RobotComponent {
 	
 	//variable(s) to hold motor controller objects and determine what joystick will be used.
-	Jaguar CMotor;
+	CANTalon CMotor;
 	
 	Joystick OtherJoystick;
 	
 	public Climber(Joystick j)
 	{
 		//This method should initialize everything (similar to RobotInit())
-		CMotor = new Jaguar (RobotPorts.CMotorPort);
+		CMotor = new CANTalon (RobotPorts.CMotorPort);
 		OtherJoystick=j;
 	}
 

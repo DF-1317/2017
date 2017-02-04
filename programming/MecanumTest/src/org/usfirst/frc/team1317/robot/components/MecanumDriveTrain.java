@@ -2,15 +2,16 @@ package org.usfirst.frc.team1317.robot.components;
 
 import edu.wpi.first.wpilibj.*;
 import org.usfirst.frc.team1317.robot.*;
+import com.ctre.*;
 
 public class MecanumDriveTrain implements RobotComponent {
 
 	
 	//variables to hold motor controller objects.
-	Jaguar FLMotor;
-	Jaguar FRMotor;
-	Jaguar BLMotor;
-	Jaguar BRMotor;
+	CANTalon FLMotor;
+	CANTalon FRMotor;
+	CANTalon BLMotor;
+	CANTalon BRMotor;
 	
 	//variable to hold what drive mode we are in
 	//0 is mecanum with two joysticks. One for turning and one for moving.
@@ -39,10 +40,10 @@ public class MecanumDriveTrain implements RobotComponent {
 	public MecanumDriveTrain(Joystick move, Joystick turn)
 	{
 		//Initializes motor objects
-		FLMotor = new Jaguar (RobotPorts.FLMotorPort);
-		FRMotor = new Jaguar (RobotPorts.FRMotorPort);
-		BLMotor = new Jaguar (RobotPorts.BLMotorPort);
-		BRMotor = new Jaguar (RobotPorts.BRMotorPort);
+		FLMotor = new CANTalon (RobotPorts.FLMotorPort);
+		FRMotor = new CANTalon (RobotPorts.FRMotorPort);
+		BLMotor = new CANTalon (RobotPorts.BLMotorPort);
+		BRMotor = new CANTalon (RobotPorts.BRMotorPort);
 		FRMotor.setInverted(true);
 		BRMotor.setInverted(true);
 		Drivetrain = new RobotDrive(FLMotor,BLMotor,FRMotor,BRMotor);
