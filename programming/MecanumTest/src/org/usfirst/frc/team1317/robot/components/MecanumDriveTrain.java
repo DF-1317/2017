@@ -24,17 +24,21 @@ public class MecanumDriveTrain implements RobotComponent {
 	Boolean throttleOn;
 		
 	//variable to hold what buttons are just recently pushed.
-	Boolean oldMode0ButtonState;
-	Boolean oldMode1ButtonState;
-	Boolean oldMode2ButtonState;
-		
 	Boolean oldButton2State;
+	Boolean oldButton11State;
 	
 	//object to control the drivetrain.
 	RobotDrive Drivetrain;
 
+	//the joysticks that control the motor
 	Joystick TurnJoystick;
 	Joystick MoveJoystick;
+	
+	//used for throttle control
+	double speedMultiplier;
+	double oldSpeedMultiplier;
+	
+	Boolean throttleLock;
 	
 	public MecanumDriveTrain(Joystick move, Joystick turn)
 	{
@@ -50,11 +54,11 @@ public class MecanumDriveTrain implements RobotComponent {
 		driveMode=0;
 		MoveJoystick=move;
 		TurnJoystick=turn;
-		//originally all the buttons are not pressed
-		oldMode0ButtonState=false;
-		oldMode1ButtonState=false;
-		oldMode2ButtonState=false;
+		//by default the throttle is on
 		throttleOn= true;
+		//by default throttle lock is off
+		throttleLock = false;
+		//none of the buttons were originally pressed.
 		oldButton2State = false;
 	}
 	
@@ -80,21 +84,48 @@ public class MecanumDriveTrain implements RobotComponent {
 		Boolean currentMode1ButtonState = MoveJoystick.getRawButton(4);
 		Boolean currentMode2ButtonState = MoveJoystick.getRawButton(5);
 		Boolean currentButton2State = MoveJoystick.getRawButton(2);
+		Boolean currentButton11State = MoveJoystick.getRawButton(11);
 		//If the button to turn on mode 0 is pressed, but wasn't before (i.e. just pressed)
 		if (currentButton2State == true && oldButton2State ==false)
 		{
-			throttleOn = !throttleOn; 
-		}
-						
-		double speedMultiplier;
-						
-		if(throttleOn)
+			throttleOn = !throttleOn;
+			//the below user notifies the user what mode he is in.
+			if (throttleOn)
 			{
-				double throttle = -MoveJoystick.getThrottle();
-				speedMultiplier = 0.45*throttle+0.55;
+				System.out.println("Throttle control is on.");
+				if (throttleLock)
+				{
+					speedMultiplier = oldSpeedMultiplier;
+				}
 			}
 			else
-				speedMultiplier = 1.0;
+			{
+				System.out.println("Throttle control is off.");
+				oldSpeedMultiplier = speedMultiplier; 
+			}
+		}
+		
+		if (currentButton11State == true && oldButton11State == false)
+		{
+			throttleLock = !throttleLock;
+			if (throttleLock == true)
+			{
+				System.out.println("Throttle Lock is On");
+			}
+			else
+			{
+				System.out.println("Throttle Lock is Off");
+			}
+		}
+		if(throttleOn && !throttleLock)
+		{
+			//scales the throttle so that it ranges from .1 to 1.0 instead of -1.0 to 1.0
+			double throttle = -MoveJoystick.getThrottle();
+			speedMultiplier = 0.45*throttle+0.55;
+		}
+		else if (!throttleOn)
+			//if there is no throttle, we can go at full speed.
+			speedMultiplier = 1.0;
 				
 		if (currentMode0ButtonState == true)
 		{
@@ -102,17 +133,17 @@ public class MecanumDriveTrain implements RobotComponent {
 			driveMode = 0;
 			System.out.println("Switched to two Joystick Mecanum Mode");
 		}
-		//If the button to turn on mode 1 is pressed, but wasn't before
+		//If the button to turn on mode 1 is pressed
 		else if (currentMode1ButtonState == true)
 		{
-			//switch to mode 1 (one joystick mecanum)
+			//switch to mode 1 (one joystick mecanum) and notify the user
 			driveMode = 1;
 			System.out.println("Switched to one Joystick Mecanum");
 		}
-		//If the button to turn on mode 1 is pressed, but wasn't before
+		//If the button to turn on mode 2 is pressed
 		else if (currentMode2ButtonState == true)
 		{
-			//switch mode 2 
+			//switch mode 2 (tank drive) and notify the user
 			driveMode = 2;
 			System.out.println("Switched to two Joystick Tank Drive");
 		}
@@ -129,11 +160,7 @@ public class MecanumDriveTrain implements RobotComponent {
 			//drive the robot with tank drive. Use one joystick to control the left motor and one to control the right motor.
 			Drivetrain.tankDrive(speedMultiplier*MoveJoystick.getY(), speedMultiplier*TurnJoystick.getY());
 		}
-		oldMode0ButtonState = currentMode0ButtonState;
-		oldMode1ButtonState = currentMode1ButtonState;
-		oldMode2ButtonState = currentMode1ButtonState;
 		oldButton2State = currentButton2State;
-		
 	}
 
 	@Override
