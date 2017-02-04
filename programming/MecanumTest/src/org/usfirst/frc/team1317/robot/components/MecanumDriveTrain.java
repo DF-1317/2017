@@ -97,16 +97,25 @@ public class MecanumDriveTrain implements RobotComponent {
 				speedMultiplier = 1.0;
 				
 		if (currentMode0ButtonState == true)
-		//switch to mode 0 (two joystick mecanum)
+		{
+			//switch to mode 0 (two joystick mecanum)
 			driveMode = 0;
+			System.out.println("Switched to two Joystick Mecanum Mode");
+		}
 		//If the button to turn on mode 1 is pressed, but wasn't before
 		else if (currentMode1ButtonState == true)
+		{
 			//switch to mode 1 (one joystick mecanum)
 			driveMode = 1;
+			System.out.println("Switched to one Joystick Mecanum");
+		}
 		//If the button to turn on mode 1 is pressed, but wasn't before
 		else if (currentMode2ButtonState == true)
-		//switch mode 2 
+		{
+			//switch mode 2 
 			driveMode = 2;
+			System.out.println("Switched to two Joystick Tank Drive");
+		}
 		if(driveMode == 0) {
 			//use one joystick to move the robot forward and sideways. Move the other joystick sideways to turn
 			Drivetrain.mecanumDrive_Cartesian(speedMultiplier*MoveJoystick.getX(), speedMultiplier*MoveJoystick.getY(), speedMultiplier*TurnJoystick.getX(), 0);
