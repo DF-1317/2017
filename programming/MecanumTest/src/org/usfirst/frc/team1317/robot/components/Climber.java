@@ -7,9 +7,20 @@ import edu.wpi.first.wpilibj.*;
  */
 public class Climber implements RobotComponent {
 	
+	//Motor port(s) for the climbing mechanism
+	final int CMotorPort = 5;
+	
+	//variable(s) to hold motor controller objects.
+	Jaguar CMotor;
+	
+	Joystick OtherJoystick;
+	
+	
 	public Climber(Joystick j)
 	{
-		//This method should initalize everything (similar to RobotInit())
+		//This method should initailize everything (similar to RobotInit())
+		CMotor = new Jaguar (CMotorPort);
+		OtherJoystick=j;
 	}
 
 	//This method is called at the start of Autonomous
@@ -30,6 +41,8 @@ public class Climber implements RobotComponent {
 	@Override
 	public void TeleopUpdate() {
 		// TODO Auto-generated method stub
+		double forward = OtherJoystick.getY();
+		CMotor.set(forward);
 
 	}
 
