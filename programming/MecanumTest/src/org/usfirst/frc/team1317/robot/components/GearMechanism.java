@@ -8,12 +8,19 @@ public class GearMechanism implements RobotComponent {
 	Boolean DoorOpen;
 	Boolean PistonOut;
 	Joystick control;
+	Boolean ManualOverride;
+	byte counter;
 	
 	public GearMechanism(Joystick j)
 	{
 		DoorOpener = new Solenoid(RobotPorts.DoorSolenoidPort);
 		GearPusher = new DoubleSolenoid(RobotPorts.PusherSolenoidPort1,RobotPorts.PusherSolenoidPort2);
 		control = j;
+		ManualOverride = false;
+		counter = 0;
+		DoorOpen = false;
+		PistonOut = false;
+		
 	}
 	
 	//This method is called at the start of Autonomous
@@ -34,6 +41,7 @@ public class GearMechanism implements RobotComponent {
 	@Override
 	public void TeleopUpdate() {
 		//when button 2 is pressed
+		
 		if(control.getRawButton(2))
 		{
 			//if the door is opne close the door, unless the piston is out
@@ -44,8 +52,16 @@ public class GearMechanism implements RobotComponent {
 				}
 				else 
 				{
-					//inform the user why we cannot extend the piston.
-					System.out.println("Cannot close door with piston extended.");
+					if (ManualOverride)
+					{
+						DoorOpener.set(false);
+						DoorOpen = false;
+					}
+					else
+					{
+						//inform the user why we cannot extend the piston.
+						System.out.println("Cannot close door with piston extended.");
+					}
 				}
 			}
 			//if the door is closed open the door.
@@ -73,6 +89,12 @@ public class GearMechanism implements RobotComponent {
 				}
 				else
 				{
+					if(ManualOverride)
+					{
+						GearPusher.set(DoubleSolenoid.Value.kReverse);
+						PistonOut = false;
+						System.out.println("Manually Overridden");
+					}
 					//inform the user why we cannot extend the piston.
 					System.out.println("Piston cannot be extended with door closed.");
 				}
@@ -86,6 +108,29 @@ public class GearMechanism implements RobotComponent {
 	public void TestUpdate() {
 		// TODO Auto-generated method stub
 
+	}
+	
+	public void ManualOverideControl()
+	{
+		//increment the counter when it is manual override
+		if(ManualOverride)
+		{
+			counter++;
+		}
+		
+		//when the counter is greater than 250 (about 5 seconds)
+		if(counter>250)
+		{
+			//turn manual override off.
+			counter = 0;
+		}
+		//turn on manual override with button 9
+		if(control.getRawButton(9))
+		{
+			ManualOverride = true;
+			counter = 0;
+		}
+		
 	}
 
 }
