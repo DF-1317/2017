@@ -56,6 +56,7 @@ public class MecanumDriveTrain implements RobotComponent {
 		throttleLock = false;
 		//none of the buttons were originally pressed.
 		oldButton2State = false;
+		oldButton11State = false;
 	}
 	
 	//This method is called at the start of Autonomous
