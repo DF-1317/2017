@@ -158,6 +158,7 @@ public class MecanumDriveTrain implements RobotComponent {
 			Drivetrain.tankDrive(speedMultiplier*MoveJoystick.getY(), speedMultiplier*TurnJoystick.getY());
 		}
 		oldButton2State = currentButton2State;
+		oldButton11State = currentButton11State;
 	}
 
 	@Override
