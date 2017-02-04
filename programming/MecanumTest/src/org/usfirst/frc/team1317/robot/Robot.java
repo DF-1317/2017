@@ -18,11 +18,6 @@ public class Robot extends IterativeRobot {
 	final String customAuto = "My Auto";
 	String autoSelected;
 	SendableChooser<String> chooser = new SendableChooser<>();
-
-	
-	
-	DoubleSolenoid DoorOpener;
-	DoubleSolenoid GearPusher;
 	
 	//what ports the joysticks are in
 	final int TurnJoystickPort = 1;
@@ -52,16 +47,16 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Auto choices", chooser);
 		
 		
-		//initializes the joystick object
+		//initializes the joystick objects
 		TurnJoystick = new Joystick(TurnJoystickPort);
 		MoveJoystick = new Joystick(MoveJoystickPort);
 		OtherJoystick = new Joystick(OtherJoystickPort);
-		//initializes the drivetrain with motors
+		//initializes drivetrain, telling it what joystick to use
 		driveTrain = new MecanumDriveTrain(MoveJoystick, TurnJoystick);
+		//initializes climber with what joystick to control
 		climber = new Climber(OtherJoystick);
+		//initializes the gear Mechanism, with what joystick to use.
 		gearMechanism = new GearMechanism(OtherJoystick);
-		//initializes the components necessary for pneumatics
-		initializePneumatics();
 	}
 
 	/**
@@ -81,6 +76,9 @@ public class Robot extends IterativeRobot {
 		// autoSelected = SmartDashboard.getString("Auto Selector",
 		// defaultAuto);
 		System.out.println("Auto selected: " + autoSelected);
+		driveTrain.AutoStart();
+		gearMechanism.AutoStart();
+		climber.AutoStart();
 	}
 
 	/**
@@ -97,6 +95,9 @@ public class Robot extends IterativeRobot {
 			// Put default auto code here
 			break;
 		}
+		driveTrain.AutoUpdate();
+		gearMechanism.AutoUpdate();
+		climber.AutoUpdate();
 	}
 
 	/**
@@ -111,12 +112,13 @@ public class Robot extends IterativeRobot {
 		//In Mode 0, joystick 2 controls movement direction and joystick 1 controls turning
 		//In Mode 1, joystick 2 controls movement direction and twisting the joystick controls turning
 		//In Mode 2, joystick 1 controls the left wheels of the robot and joystick 2 controls the right wheels
-		driveTrain.TeleopUpdate();
+		driveTrain.TeleopUpdate(); //uses the joysticks to control the drivetrain
 		//all of the controls for the pneumatics are on the far left joystick.
-		//The trigger turns all the solenoids on
-		//see method definition below for inputs. The inputs will need to be changed based on what we discussed.
-		gearMechanism.TeleopUpdate();
-		climber.TeleopUpdate();
+		//The trigger turns toggles the gear pusher.
+		//Button 2 toggles the door
+		gearMechanism.TeleopUpdate();//uses the joysticks to control the gear mechanism. 
+		//Moving joystick 0 forward and back controls the climber motor.
+		climber.TeleopUpdate(); //uses the joysticks to control the climber.
 	}
 
 	/**
@@ -128,45 +130,5 @@ public class Robot extends IterativeRobot {
 		climber.TestUpdate();
 		gearMechanism.TestUpdate();
 	}
-	
-	private void initializePneumatics(){
-		DoorOpener = new DoubleSolenoid(1,2);
-		GearPusher = new DoubleSolenoid(3,4);
-	}
-	
-	private void updatePneumatics(){
-		//if button 3 is pressed close the gear solenoid
-		if(OtherJoystick.getRawButton(3))
-		{
-			GearPusher.set(DoubleSolenoid.Value.kReverse);
-		}
-		if(OtherJoystick.getRawButton(4))
-		{
-			DoorOpener.set(DoubleSolenoid.Value.kReverse);
-		}
-		if(OtherJoystick.getRawButton(5))
-		{
-			GearPusher.set(DoubleSolenoid.Value.kForward);
-		}
-		if(OtherJoystick.getRawButton(6))
-		{
-			DoorOpener.set(DoubleSolenoid.Value.kReverse);
-		}
-		if(OtherJoystick.getTrigger())
-		{
-			DoorOpener.set(DoubleSolenoid.Value.kOff);
-			GearPusher.set(DoubleSolenoid.Value.kOff);
-		}
-	}
-	
-	private void initializeDrivetrain(){
-		
-	
-	}
-	
-	//takes imput from the joysticks and drives the motors
-	private void updateDrivetrain(){
-		
-			}
 }
 
