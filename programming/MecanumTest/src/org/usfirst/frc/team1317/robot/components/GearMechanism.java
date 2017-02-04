@@ -13,11 +13,15 @@ public class GearMechanism implements RobotComponent {
 	
 	public GearMechanism(Joystick j)
 	{
+		//creates new solenoids
 		DoorOpener = new Solenoid(RobotPorts.DoorSolenoidPort);
 		GearPusher = new DoubleSolenoid(RobotPorts.PusherSolenoidPort1,RobotPorts.PusherSolenoidPort2);
+		//saves the joystick that was input
 		control = j;
+		//sets values to default
 		ManualOverride = false;
 		counter = 0;
+		//these may need to be changed depending on how we start.
 		DoorOpen = false;
 		PistonOut = false;
 		
@@ -52,10 +56,12 @@ public class GearMechanism implements RobotComponent {
 				}
 				else 
 				{
+					//if manual override is set open the door anyway.
 					if (ManualOverride)
 					{
 						DoorOpener.set(false);
 						DoorOpen = false;
+						System.out.println("Manually overriden.");
 					}
 					else
 					{
