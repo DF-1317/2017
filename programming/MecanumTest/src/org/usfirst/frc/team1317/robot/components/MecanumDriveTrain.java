@@ -1,14 +1,10 @@
 package org.usfirst.frc.team1317.robot.components;
 
 import edu.wpi.first.wpilibj.*;
+import org.usfirst.frc.team1317.robot.*;
 
 public class MecanumDriveTrain implements RobotComponent {
 
-	//constants for what ports the motors are in
-	final int FLMotorPort = 3;
-	final int FRMotorPort = 4;
-	final int BLMotorPort = 1;
-	final int BRMotorPort = 2;
 	
 	//variables to hold motor controller objects.
 	Jaguar FLMotor;
@@ -43,10 +39,10 @@ public class MecanumDriveTrain implements RobotComponent {
 	public MecanumDriveTrain(Joystick move, Joystick turn)
 	{
 		//Initializes motor objects
-		FLMotor = new Jaguar (FLMotorPort);
-		FRMotor = new Jaguar (FRMotorPort);
-		BLMotor = new Jaguar (BLMotorPort);
-		BRMotor = new Jaguar (BRMotorPort);
+		FLMotor = new Jaguar (RobotPorts.FLMotorPort);
+		FRMotor = new Jaguar (RobotPorts.FRMotorPort);
+		BLMotor = new Jaguar (RobotPorts.BLMotorPort);
+		BRMotor = new Jaguar (RobotPorts.BRMotorPort);
 		FRMotor.setInverted(true);
 		BRMotor.setInverted(true);
 		Drivetrain = new RobotDrive(FLMotor,BLMotor,FRMotor,BRMotor);

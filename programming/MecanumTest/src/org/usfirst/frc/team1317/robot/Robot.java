@@ -19,11 +19,6 @@ public class Robot extends IterativeRobot {
 	String autoSelected;
 	SendableChooser<String> chooser = new SendableChooser<>();
 	
-	//what ports the joysticks are in
-	final int TurnJoystickPort = 1;
-	final int MoveJoystickPort = 2;
-	final int OtherJoystickPort = 3;
-	
 	//variables to hold the joystick objects.
 	Joystick TurnJoystick;
 	Joystick MoveJoystick;
@@ -48,9 +43,9 @@ public class Robot extends IterativeRobot {
 		
 		
 		//initializes the joystick objects
-		TurnJoystick = new Joystick(TurnJoystickPort);
-		MoveJoystick = new Joystick(MoveJoystickPort);
-		OtherJoystick = new Joystick(OtherJoystickPort);
+		TurnJoystick = new Joystick(RobotPorts.TurnJoystickPort);
+		MoveJoystick = new Joystick(RobotPorts.MoveJoystickPort);
+		OtherJoystick = new Joystick(RobotPorts.OtherJoystickPort);
 		//initializes drivetrain, telling it what joystick to use
 		driveTrain = new MecanumDriveTrain(MoveJoystick, TurnJoystick);
 		//initializes climber with what joystick to control
