@@ -133,6 +133,7 @@ public class MecanumDriveTrain implements RobotComponent {
 		oldMode1ButtonState = currentMode1ButtonState;
 		oldMode2ButtonState = currentMode1ButtonState;
 		oldButton2State = currentButton2State;
+		
 	}
 
 	@Override
