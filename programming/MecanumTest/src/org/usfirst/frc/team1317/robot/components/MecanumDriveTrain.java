@@ -1,6 +1,9 @@
 package org.usfirst.frc.team1317.robot.components;
 
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.interfaces.Accelerometer;
+import edu.wpi.first.wpilibj.internal.HardwareTimer;
+
 import org.usfirst.frc.team1317.robot.*;
 import com.ctre.*;
 
@@ -37,6 +40,15 @@ public class MecanumDriveTrain implements RobotComponent {
 	
 	Boolean throttleLock;
 	
+	//variables that can help the robot move a certain distance.
+	Accelerometer accel;
+	double distancetravelled;
+	double velocity;
+	double oldVelocity;
+	double oldAcceleration;
+	double lastTime;
+	HardwareTimer timer;
+	
 	public MecanumDriveTrain(Joystick move, Joystick turn)
 	{
 		//Initializes motor objects
@@ -58,6 +70,10 @@ public class MecanumDriveTrain implements RobotComponent {
 		//none of the buttons were originally pressed.
 		oldButton2State = false;
 		oldButton11State = false;
+		accel = new BuiltInAccelerometer();
+		distancetravelled = 0;
+		timer = new HardwareTimer();
+		lastTime = timer.getFPGATimestamp();
 	}
 	
 	//This method is called at the start of Autonomous
@@ -167,5 +183,56 @@ public class MecanumDriveTrain implements RobotComponent {
 		// TODO Auto-generated method stub
 
 	}
+	
+	//I'll have to see which axis of the accelerometer is forward and which is sideways
+	//This method can also be used to drive backward if a negative distance is inputed.
+	//I think there are some things that need fixed. Like the first time this runs it will not use the correct time for lastTime.
+	//(although the acceleration may be zero at that point which would make that effect neglible)
+	//I might also want to look into using PID control.
+	//This method would be called every 20 milliseconds in the autonomous code.
+	//It will make the robot drive forward the distance specified(approximately)
+	//I also need to figure out a way to reset the velocity to zero when the robot is still.
+	boolean DriveForward(double distance, double speed, double heading) {
+		//gets the current time
+		double currentTime = timer.getFPGATimestamp();
+		//calculate the amount of time that has passed since this function was last called.
+		double changeInTime = currentTime - lastTime;
+		//gets the current acceleration
+		double currentAcceleration = accel.getX();
+		//calculates the change in velocity by averaging the current acceleration and the old acceleration, converting the acceleration to ft/s^2, and multiplying by change in time
+		double changeInVelocity = (oldAcceleration+currentAcceleration)*32.174/2 *changeInTime;
+		//adds the change in velocity to the velocity
+		velocity+=changeInVelocity;
+		//calculates the change in position from the velocity by averaging the current and old velocity and multiplying by the change in time.
+		double changeInPosition = (oldVelocity + velocity)/2 * changeInTime;
+		//adds the change in position to the distance traveled
+		distancetravelled += changeInPosition;
+		//sets the old times to what the times are now
+		oldVelocity = velocity;
+		oldAcceleration = currentAcceleration;
+		lastTime = currentTime;
+		//if we have already traveled far enough return that we have traveled that far.
+		if (distancetravelled>=distance) {
+			//stop moving
+			Drivetrain.mecanumDrive_Cartesian(0, 0, 0, 0);
+			//tell the code that we are done.
+			return true;
+		}
+		else
+		{
+			//if we have not got there yet keep driving.
+			//I will need to multiply the acceleration by a variable.
+			//drives forward at the correct speed and corrects for drifting sideways and turning.
+			Drivetrain.mecanumDrive_Cartesian(-accel.getZ(), speed, 0, 0); //the input after speed should be a gyro sensors angle multiplied by a constant (the robot should turn in the opposite direction than it is currently driving so it drives straight)
+			return false;
+		}
+	}
+	//stops the drivetrain, resets the distance traveled, stops the motors and sets the velocity to zero.
+	void resetDistance() {
+		distancetravelled = 0;
+		Drivetrain.mecanumDrive_Cartesian(0, 0, 0, 0);
+		velocity = 0;
+	}
+	
 
 }
