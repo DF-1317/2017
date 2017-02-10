@@ -89,7 +89,10 @@ public class MecanumDriveTrain implements RobotComponent {
 	//this method is called every 20 milliseconds during Autonomous
 	@Override
 	public void AutoUpdate() {
-		// TODO Auto-generated method stub
+		if(timer.getMatchTime()<2)
+		{
+			Drivetrain.mecanumDrive_Cartesian(0, 0.6, 0, 0);
+		}
 
 	}
 
