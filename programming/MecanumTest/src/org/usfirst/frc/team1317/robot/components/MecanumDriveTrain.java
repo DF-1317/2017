@@ -99,29 +99,19 @@ public class MecanumDriveTrain implements RobotComponent {
 		Boolean currentMode2ButtonState = MoveJoystick.getRawButton(5);
 		Boolean currentButton2State = MoveJoystick.getRawButton(2);
 		Boolean currentButton11State = MoveJoystick.getRawButton(11);
-		//If the button to turn on mode 0 is pressed, but wasn't before (i.e. just pressed)
+		//If the button 2 is pressed, but wasn't before (i.e. just pressed)
 		if (currentButton2State == true && oldButton2State ==false)
 		{
-			throttleOn = !throttleOn;
-			//the below user notifies the user what mode he is in.
-			if (throttleOn)
-			{
-				System.out.println("Throttle control is on.");
-				if (throttleLock)
-				{
-					speedMultiplier = oldSpeedMultiplier;
-				}
-			}
-			else
-			{
-				System.out.println("Throttle control is off.");
-				oldSpeedMultiplier = speedMultiplier; 
-			}
+			//toggle whether the throttle is on or not
+			toggleThrottleControl();
 		}
 		
+		//if button 11 is pressed but was not the last time.
 		if (currentButton11State == true && oldButton11State == false)
 		{
+			//toggles the throttle lock
 			throttleLock = !throttleLock;
+			//notifies the use which mode is on
 			if (throttleLock == true)
 			{
 				System.out.println("Throttle Lock is On");
@@ -131,6 +121,7 @@ public class MecanumDriveTrain implements RobotComponent {
 				System.out.println("Throttle Lock is Off");
 			}
 		}
+		//if the throttle is not locked and is on.
 		if(throttleOn && !throttleLock)
 		{
 			//scales the throttle so that it ranges from .1 to 1.0 instead of -1.0 to 1.0
@@ -141,6 +132,7 @@ public class MecanumDriveTrain implements RobotComponent {
 			//if there is no throttle, we can go at full speed.
 			speedMultiplier = 1.0;
 				
+		//if the button to turn on mode 0 is on
 		if (currentMode0ButtonState == true)
 		{
 			//switch to mode 0 (two joystick mecanum)
@@ -174,6 +166,8 @@ public class MecanumDriveTrain implements RobotComponent {
 			//drive the robot with tank drive. Use one joystick to control the left motor and one to control the right motor.
 			Drivetrain.tankDrive(speedMultiplier*MoveJoystick.getY(), speedMultiplier*TurnJoystick.getY());
 		}
+		
+		//the current button states are now the old button states.
 		oldButton2State = currentButton2State;
 		oldButton11State = currentButton11State;
 	}
@@ -235,6 +229,25 @@ public class MecanumDriveTrain implements RobotComponent {
 		oldAcceleration = 0;
 		velocity = 0;
 		lastTime=timer.getFPGATimestamp();
+	}
+	
+	void toggleThrottleControl()
+	{
+		throttleOn = !throttleOn;
+		//the below user notifies the user what mode he is in.
+		if (throttleOn)
+		{
+			System.out.println("Throttle control is on.");
+			if (throttleLock)
+			{
+				speedMultiplier = oldSpeedMultiplier;
+			}
+		}
+		else
+		{
+			System.out.println("Throttle control is off.");
+			oldSpeedMultiplier = speedMultiplier; 
+		}
 	}
 	
 
