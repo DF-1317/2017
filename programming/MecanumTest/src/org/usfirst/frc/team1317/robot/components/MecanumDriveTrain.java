@@ -231,7 +231,10 @@ public class MecanumDriveTrain implements RobotComponent {
 	void resetDistance() {
 		distancetravelled = 0;
 		Drivetrain.mecanumDrive_Cartesian(0, 0, 0, 0);
+		oldVelocity = 0;
+		oldAcceleration = 0;
 		velocity = 0;
+		lastTime=timer.getFPGATimestamp();
 	}
 	
 
