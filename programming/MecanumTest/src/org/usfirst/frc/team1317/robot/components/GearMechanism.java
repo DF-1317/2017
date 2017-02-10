@@ -50,30 +50,11 @@ public class GearMechanism implements RobotComponent {
 		{
 			//if the door is opne close the door, unless the piston is out
 			if(DoorOpen) {
-				if (!PistonOut) {
-					DoorOpener.set(false);
-					DoorOpen = false;
-				}
-				else 
-				{
-					//if manual override is set open the door anyway.
-					if (ManualOverride)
-					{
-						DoorOpener.set(false);
-						DoorOpen = false;
-						System.out.println("Manually overriden.");
-					}
-					else
-					{
-						//inform the user why we cannot extend the piston.
-						System.out.println("Cannot close door with piston extended.");
-					}
-				}
+				tryCloseDoor();
 			}
 			//if the door is closed open the door.
 			else {
-				DoorOpener.set(true);
-				DoorOpen = true;
+				openDoor();
 			}
 		}
 		
@@ -83,32 +64,77 @@ public class GearMechanism implements RobotComponent {
 			//if the piston is out, bring the piston in.
 			if (PistonOut)
 			{
-				GearPusher.set(DoubleSolenoid.Value.kReverse);
-				PistonOut = false;
+				pushGear();
 			}
 			//if the piston is in
 			else
 			{
-				//push the piston out if the door is open.
-				if (DoorOpen){
-					GearPusher.set(DoubleSolenoid.Value.kForward);
-				}
-				else
-				{
-					if(ManualOverride)
-					{
-						GearPusher.set(DoubleSolenoid.Value.kReverse);
-						PistonOut = false;
-						System.out.println("Manually Overridden");
-					}
-					//inform the user why we cannot extend the piston.
-					System.out.println("Piston cannot be extended with door closed.");
-				}
+				
 			}	
 		}
 	}
 
+	public void openDoor()
+	{
+		DoorOpener.set(true);
+		DoorOpen = true;
+	}
 	
+	public Boolean tryCloseDoor()
+	{
+		if (!PistonOut) {
+			DoorOpener.set(false);
+			DoorOpen = false;
+			return true;
+		}
+		else 
+		{
+			//if manual override is set open the door anyway.
+			if (ManualOverride)
+			{
+				DoorOpener.set(false);
+				DoorOpen = false;
+				System.out.println("Manually overriden.");
+				return true;
+			}
+			else
+			{
+				//inform the user why we cannot extend the piston.
+				System.out.println("Cannot close door with piston extended.");
+				return false;
+			}
+		}
+	}
+	
+	public void pushGear()
+	{
+		GearPusher.set(DoubleSolenoid.Value.kReverse);
+		PistonOut = false;
+	}
+	
+	public Boolean tryRetractPiston()
+	{
+		//push the piston out if the door is open.
+		if (DoorOpen){
+			GearPusher.set(DoubleSolenoid.Value.kForward);
+			return true;
+		}
+		else
+		{
+			if(ManualOverride)
+			{
+				GearPusher.set(DoubleSolenoid.Value.kReverse);
+				PistonOut = false;
+				System.out.println("Manually Overridden");
+				return true;
+			}
+			else {
+			//inform the user why we cannot extend the piston.
+			System.out.println("Piston cannot be extended with door closed.");
+			return false;
+			}
+		}
+	}
 
 	@Override
 	public void TestUpdate() {
