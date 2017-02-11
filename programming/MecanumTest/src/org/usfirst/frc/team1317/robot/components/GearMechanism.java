@@ -64,12 +64,12 @@ public class GearMechanism implements RobotComponent {
 			//if the piston is out, bring the piston in.
 			if (PistonOut)
 			{
-				pushGear();
+				retractGearPiston();
 			}
 			//if the piston is in
 			else
 			{
-				
+				this.trypushGear();
 			}	
 		}
 	}
@@ -106,24 +106,24 @@ public class GearMechanism implements RobotComponent {
 		}
 	}
 	
-	public void pushGear()
+	public void retractGearPiston()
 	{
-		GearPusher.set(DoubleSolenoid.Value.kForward);
+		GearPusher.set(DoubleSolenoid.Value.kReverse);
 		PistonOut = false;
 	}
 	
-	public Boolean tryRetractPiston()
+	public Boolean trypushGear()
 	{
 		//push the piston out if the door is open.
 		if (DoorOpen){
-			GearPusher.set(DoubleSolenoid.Value.kReverse);
+			GearPusher.set(DoubleSolenoid.Value.kForward);
 			return true;
 		}
 		else
 		{
 			if(ManualOverride)
 			{
-				GearPusher.set(DoubleSolenoid.Value.kReverse);
+				GearPusher.set(DoubleSolenoid.Value.kForward);
 				PistonOut = false;
 				System.out.println("Manually Overridden");
 				return true;

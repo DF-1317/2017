@@ -20,6 +20,7 @@ public class Robot extends IterativeRobot {
 	final String rightAuto = "Right";
 	String autoSelected;
 	SendableChooser<String> chooser = new SendableChooser<>();
+	int AutoStep;
 	
 	//variables to hold the joystick objects.
 	Joystick TurnJoystick;
@@ -84,7 +85,7 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during autonomous
 	 */
 	@Override
-	public void autonomousPeriodic() { //all the code in this was automatically added
+	public void autonomousPeriodic() { 
 		switch (autoSelected) {
 		case crossingAuto:
 			if(Timer.getMatchTime()<2)
@@ -98,7 +99,38 @@ public class Robot extends IterativeRobot {
 			break;
 		case defaultAuto:
 		default:
-			// Put default auto code here
+			boolean next = false;
+			if(AutoStep == 1)
+			{
+				next = driveTrain.DriveForward(0.6,7,0);
+			}
+			if(AutoStep == 2)
+			{
+				next = driveTrain.alignWithPeg();
+			}
+			if(AutoStep == 3)
+			{
+				gearMechanism.openDoor(); 
+			}
+			if(AutoStep == 4)
+											//we need to fill these out
+			{
+				next = driveTrain.DriveForward(0, 0, 0);
+			}
+			if(AutoStep == 5)
+			{
+				next = gearMechanism.trypushGear();
+			}
+			if(AutoStep == 6)
+			{
+				gearMechanism.retractGearPiston();
+			}
+			if(AutoStep == 7)
+			{
+				next = gearMechanism.tryCloseDoor();
+			}
+			if (next)
+				AutoStep++;
 			break;
 		
 		}

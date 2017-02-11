@@ -206,7 +206,7 @@ public class MecanumDriveTrain implements RobotComponent {
 	//This method would be called every 20 milliseconds in the autonomous code.
 	//It will make the robot drive forward the distance specified(approximately)
 	//I also need to figure out a way to reset the velocity to zero when the robot is still.
-	boolean DriveForward(double distance, double speed, double heading) {
+	public boolean DriveForward(double distance, double speed, double heading) {
 		//gets the current time
 		double currentTime = timer.getFPGATimestamp();
 		//calculate the amount of time that has passed since this function was last called.
