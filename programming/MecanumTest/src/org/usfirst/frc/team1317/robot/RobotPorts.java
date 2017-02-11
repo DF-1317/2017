@@ -11,6 +11,7 @@ public class RobotPorts {
 	public static int CMotorPort = 5;
 	
 	public static int DoorSolenoidPort =1;
+	public static int DoorSolenoidPort2 =2;
 	public static int PusherSolenoidPort1=2;
 	public static int PusherSolenoidPort2=3;
 	

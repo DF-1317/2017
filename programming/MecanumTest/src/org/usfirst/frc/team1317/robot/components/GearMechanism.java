@@ -3,7 +3,7 @@ import edu.wpi.first.wpilibj.*;
 import org.usfirst.frc.team1317.robot.*;
 public class GearMechanism implements RobotComponent {
 
-	Solenoid DoorOpener;
+	DoubleSolenoid DoorOpener;
 	DoubleSolenoid GearPusher;
 	Boolean DoorOpen;
 	Boolean PistonOut;
@@ -14,7 +14,7 @@ public class GearMechanism implements RobotComponent {
 	public GearMechanism(Joystick j)
 	{
 		//creates new solenoids
-		DoorOpener = new Solenoid(RobotPorts.DoorSolenoidPort);
+		DoorOpener = new DoubleSolenoid(RobotPorts.DoorSolenoidPort,RobotPorts.DoorSolenoidPort2);
 		GearPusher = new DoubleSolenoid(RobotPorts.PusherSolenoidPort1,RobotPorts.PusherSolenoidPort2);
 		//saves the joystick that was input
 		control = j;
@@ -76,14 +76,14 @@ public class GearMechanism implements RobotComponent {
 
 	public void openDoor()
 	{
-		DoorOpener.set(true);
+		DoorOpener.set(DoubleSolenoid.Value.kReverse);
 		DoorOpen = true;
 	}
 	
 	public Boolean tryCloseDoor()
 	{
 		if (!PistonOut) {
-			DoorOpener.set(false);
+			DoorOpener.set(DoubleSolenoid.Value.kForward);
 			DoorOpen = false;
 			return true;
 		}
@@ -92,7 +92,7 @@ public class GearMechanism implements RobotComponent {
 			//if manual override is set open the door anyway.
 			if (ManualOverride)
 			{
-				DoorOpener.set(false);
+				DoorOpener.set(DoubleSolenoid.Value.kForward);
 				DoorOpen = false;
 				System.out.println("Manually overriden.");
 				return true;
@@ -108,7 +108,7 @@ public class GearMechanism implements RobotComponent {
 	
 	public void pushGear()
 	{
-		GearPusher.set(DoubleSolenoid.Value.kReverse);
+		GearPusher.set(DoubleSolenoid.Value.kForward);
 		PistonOut = false;
 	}
 	
@@ -116,7 +116,7 @@ public class GearMechanism implements RobotComponent {
 	{
 		//push the piston out if the door is open.
 		if (DoorOpen){
-			GearPusher.set(DoubleSolenoid.Value.kForward);
+			GearPusher.set(DoubleSolenoid.Value.kReverse);
 			return true;
 		}
 		else
