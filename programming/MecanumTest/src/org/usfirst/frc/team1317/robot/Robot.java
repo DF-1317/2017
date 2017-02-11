@@ -86,6 +86,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() { 
+		Boolean next = false;
 		switch (autoSelected) {
 		case crossingAuto:
 			if(Timer.getMatchTime()<2)
@@ -94,12 +95,93 @@ public class Robot extends IterativeRobot {
 			}
 			break;
 		case leftAuto:
+			if(AutoStep == 1)
+			{
+				next = driveTrain.DriveForward(0.6,7,0);
+			}
+			if(AutoStep == 2)
+			{
+				next = driveTrain.turnDegrees(-60, 0.5);
+			}
+			if(AutoStep == 3)
+			{
+				next = driveTrain.DriveForward(0, 0, 0);
+			}
+			if(AutoStep == 4)
+			{
+				next = driveTrain.alignWithPeg();
+			}
+			if(AutoStep == 5)
+			{
+				gearMechanism.openDoor(); 
+				next = true;
+			}
+			if(AutoStep == 6)
+											//we need to fill these out
+			{
+				next = driveTrain.DriveForward(0, 0, 0);
+			}
+			if(AutoStep == 7)
+			{
+				next = gearMechanism.trypushGear();
+			}
+			if(AutoStep == 8)
+			{
+				gearMechanism.retractGearPiston();
+				next = true;
+			}
+			if(AutoStep == 9)
+			{
+				next = gearMechanism.tryCloseDoor();
+			}
+			if (next)
+				AutoStep++;
 			break;
 		case rightAuto:
+			if(AutoStep == 1)
+			{
+				next = driveTrain.DriveForward(0.6,7,0);
+			}
+			if(AutoStep == 2)
+			{
+				next = driveTrain.turnDegrees(60, 0.5);
+			}
+			if(AutoStep == 3)
+			{
+				next = driveTrain.DriveForward(0, 0, 0);
+			}
+			if(AutoStep == 4)
+			{
+				next = driveTrain.alignWithPeg();
+			}
+			if(AutoStep == 5)
+			{
+				gearMechanism.openDoor(); 
+				next = true;
+			}
+			if(AutoStep == 6)
+											//we need to fill these out
+			{
+				next = driveTrain.DriveForward(0, 0, 0);
+			}
+			if(AutoStep == 7)
+			{
+				next = gearMechanism.trypushGear();
+			}
+			if(AutoStep == 8)
+			{
+				gearMechanism.retractGearPiston();
+				next = true;
+			}
+			if(AutoStep == 9)
+			{
+				next = gearMechanism.tryCloseDoor();
+			}
+			if (next)
+				AutoStep++;
 			break;
 		case defaultAuto:
 		default:
-			boolean next = false;
 			if(AutoStep == 1)
 			{
 				next = driveTrain.DriveForward(0.6,7,0);
@@ -110,7 +192,8 @@ public class Robot extends IterativeRobot {
 			}
 			if(AutoStep == 3)
 			{
-				gearMechanism.openDoor(); 
+				gearMechanism.openDoor();
+				next = true;
 			}
 			if(AutoStep == 4)
 											//we need to fill these out
@@ -124,6 +207,7 @@ public class Robot extends IterativeRobot {
 			if(AutoStep == 6)
 			{
 				gearMechanism.retractGearPiston();
+				next = true;
 			}
 			if(AutoStep == 7)
 			{
