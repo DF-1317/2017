@@ -2,7 +2,8 @@ package org.usfirst.frc.team1317.robot.components;
 import edu.wpi.first.wpilibj.*;
 import org.usfirst.frc.team1317.robot.*;
 public class GearMechanism implements RobotComponent {
-
+	
+    Compressor GearCompressor;
 	DoubleSolenoid DoorOpener;
 	DoubleSolenoid GearPusher;
 	Boolean DoorOpen;
@@ -24,6 +25,7 @@ public class GearMechanism implements RobotComponent {
 		//these may need to be changed depending on how we start.
 		DoorOpen = false;
 		PistonOut = false;
+		GearCompressor = new Compressor();
 		
 	}
 	
@@ -71,6 +73,11 @@ public class GearMechanism implements RobotComponent {
 			{
 				this.trypushGear();
 			}	
+		}
+		
+		if(Timer.getMatchTime()>120)
+		{
+			GearCompressor.stop();
 		}
 	}
 
