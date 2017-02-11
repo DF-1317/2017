@@ -44,6 +44,10 @@ public class Climber implements RobotComponent {
 		double speedMultiplier = 0.45*throttle+0.55;
 		double forward = speedMultiplier * OtherJoystick.getY();
 		CMotor.set(forward);
+		if (CMotor.getOutputCurrent()>40)
+		{
+			CMotor.set(0);
+		}
 
 	}
 
