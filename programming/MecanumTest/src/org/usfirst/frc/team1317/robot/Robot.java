@@ -14,8 +14,10 @@ import org.usfirst.frc.team1317.robot.components.*;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	final String defaultAuto = "Default";
-	final String customAuto = "My Auto";
+	final String crossingAuto = "Crossing Baseline";
+	final String defaultAuto = "Center";
+	final String leftAuto = "Left";
+	final String rightAuto = "Right";
 	String autoSelected;
 	SendableChooser<String> chooser = new SendableChooser<>();
 	
@@ -37,8 +39,10 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		//some default code for autonomous selection
-		chooser.addDefault("Default Auto", defaultAuto);
-		chooser.addObject("My Auto", customAuto);
+		chooser.addDefault("Center", defaultAuto);
+		chooser.addObject("Left", leftAuto);
+		chooser.addObject("Right", rightAuto);
+		chooser.addObject("Cross the Baseline", crossingAuto);
 		SmartDashboard.putData("Auto choices", chooser);
 		
 		
@@ -82,13 +86,21 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() { //all the code in this was automatically added
 		switch (autoSelected) {
-		case customAuto:
-			// Put custom auto code here
+		case crossingAuto:
+			if(Timer.getMatchTime()<2)
+			{
+				driveTrain.drive(0, 0.6, 0);
+			}
+			break;
+		case leftAuto:
+			break;
+		case rightAuto:
 			break;
 		case defaultAuto:
 		default:
 			// Put default auto code here
 			break;
+		
 		}
 		driveTrain.AutoUpdate();
 		gearMechanism.AutoUpdate();

@@ -89,10 +89,7 @@ public class MecanumDriveTrain implements RobotComponent {
 	//this method is called every 20 milliseconds during Autonomous
 	@Override
 	public void AutoUpdate() {
-		if(timer.getMatchTime()<2)
-		{
-			Drivetrain.mecanumDrive_Cartesian(0, 0.6, 0, 0);
-		}
+		
 
 	}
 
@@ -245,13 +242,23 @@ public class MecanumDriveTrain implements RobotComponent {
 		}
 	}
 	//stops the drivetrain, resets the distance traveled, stops the motors and sets the velocity to zero.
-	void resetDistance() {
+	public void resetDistance() {
 		distancetravelled = 0;
 		Drivetrain.mecanumDrive_Cartesian(0, 0, 0, 0);
 		oldVelocity = 0;
 		oldAcceleration = 0;
 		velocity = 0;
 		lastTime=timer.getFPGATimestamp();
+	}
+	
+	public Boolean turnDegrees(double degrees, double speed)
+	{
+		return false;
+	}
+	
+	public Boolean alignWithPeg()
+	{
+		return false;
 	}
 	
 	void toggleThrottleControl()
@@ -271,6 +278,11 @@ public class MecanumDriveTrain implements RobotComponent {
 			System.out.println("Throttle control is off.");
 			oldSpeedMultiplier = speedMultiplier; 
 		}
+	}
+	
+	public void drive(double x,double y, double rotation)
+	{
+		Drivetrain.mecanumDrive_Cartesian(x, y, rotation, 0);
 	}
 	
 
