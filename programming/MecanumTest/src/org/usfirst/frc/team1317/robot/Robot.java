@@ -153,11 +153,15 @@ public class Robot extends IterativeRobot {
 		//In Mode 1, joystick 2 controls movement direction and twisting the joystick controls turning
 		//In Mode 2, joystick 1 controls the left wheels of the robot and joystick 2 controls the right wheels
 		driveTrain.TeleopUpdate(); //uses the joysticks to control the drivetrain
+		
+		
 		//all of the controls for the pneumatics are on the far left joystick.
 		//The trigger turns toggles the gear pusher.
 		//Button 2 toggles the door
 		//Button 9 turns on manual override for five seconds on the mechanism's safety feature.
 		gearMechanism.TeleopUpdate();//uses the joysticks to control the gear mechanism. 
+		
+		
 		//Moving joystick 0 forward and back controls the climber motor.
 		climber.TeleopUpdate(); //uses the joysticks to control the climber.
 	}

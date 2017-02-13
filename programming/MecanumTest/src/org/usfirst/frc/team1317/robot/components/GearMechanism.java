@@ -4,7 +4,7 @@ import org.usfirst.frc.team1317.robot.*;
 public class GearMechanism implements RobotComponent {
 	
     Compressor GearCompressor;
-	DoubleSolenoid DoorOpener;
+	Solenoid DoorOpener;
 	DoubleSolenoid GearPusher;
 	Boolean DoorOpen;
 	Boolean PistonOut;
@@ -15,7 +15,7 @@ public class GearMechanism implements RobotComponent {
 	public GearMechanism(Joystick j)
 	{
 		//creates new solenoids
-		DoorOpener = new DoubleSolenoid(RobotPorts.DoorSolenoidPort,RobotPorts.DoorSolenoidPort2);
+		DoorOpener = new Solenoid(RobotPorts.DoorSolenoidPort,RobotPorts.DoorSolenoidPort2);
 		GearPusher = new DoubleSolenoid(RobotPorts.PusherSolenoidPort1,RobotPorts.PusherSolenoidPort2);
 		//saves the joystick that was input
 		control = j;
@@ -83,14 +83,14 @@ public class GearMechanism implements RobotComponent {
 
 	public void openDoor()
 	{
-		DoorOpener.set(DoubleSolenoid.Value.kReverse);
+		DoorOpener.set(true);
 		DoorOpen = true;
 	}
 	
 	public Boolean tryCloseDoor()
 	{
 		if (!PistonOut) {
-			DoorOpener.set(DoubleSolenoid.Value.kForward);
+			DoorOpener.set(false);
 			DoorOpen = false;
 			return true;
 		}
@@ -99,7 +99,7 @@ public class GearMechanism implements RobotComponent {
 			//if manual override is set open the door anyway.
 			if (ManualOverride)
 			{
-				DoorOpener.set(DoubleSolenoid.Value.kForward);
+				DoorOpener.set(true);
 				DoorOpen = false;
 				System.out.println("Manually overriden.");
 				return true;
