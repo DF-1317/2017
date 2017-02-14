@@ -5,7 +5,7 @@ public class GearMechanism implements RobotComponent {
 	
     Compressor GearCompressor;
 	Solenoid DoorOpener;
-	DoubleSolenoid GearPusher;
+	Solenoid GearPusher;
 	Boolean DoorOpen;
 	Boolean PistonOut;
 	Joystick control;
@@ -16,7 +16,7 @@ public class GearMechanism implements RobotComponent {
 	{
 		//creates new solenoids
 		DoorOpener = new Solenoid(RobotPorts.DoorSolenoidPort,RobotPorts.DoorSolenoidPort2);
-		GearPusher = new DoubleSolenoid(RobotPorts.PusherSolenoidPort1,RobotPorts.PusherSolenoidPort2);
+		GearPusher = new Solenoid(RobotPorts.PusherSolenoidPort1,RobotPorts.PusherSolenoidPort2);
 		//saves the joystick that was input
 		control = j;
 		//sets values to default
@@ -115,7 +115,7 @@ public class GearMechanism implements RobotComponent {
 	
 	public void retractGearPiston()
 	{
-		GearPusher.set(DoubleSolenoid.Value.kReverse);
+		GearPusher.set(false);
 		PistonOut = false;
 	}
 	
@@ -123,14 +123,14 @@ public class GearMechanism implements RobotComponent {
 	{
 		//push the piston out if the door is open.
 		if (DoorOpen){
-			GearPusher.set(DoubleSolenoid.Value.kForward);
+			GearPusher.set(true);
 			return true;
 		}
 		else
 		{
 			if(ManualOverride)
 			{
-				GearPusher.set(DoubleSolenoid.Value.kForward);
+				GearPusher.set(false);
 				PistonOut = false;
 				System.out.println("Manually Overridden");
 				return true;
