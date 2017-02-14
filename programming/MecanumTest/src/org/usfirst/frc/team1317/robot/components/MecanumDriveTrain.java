@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.internal.HardwareTimer;
 
 import org.usfirst.frc.team1317.robot.*;
 import com.ctre.*;
+import com.kauailabs.navx.frc.*;
 
 public class MecanumDriveTrain implements RobotComponent {
 
@@ -52,6 +53,8 @@ public class MecanumDriveTrain implements RobotComponent {
 	double lastTime;
 	HardwareTimer timer;
 	
+	AHRS gyro;
+	
 	public MecanumDriveTrain(Joystick move, Joystick turn)
 	{
 		//Initializes motor objects
@@ -77,6 +80,7 @@ public class MecanumDriveTrain implements RobotComponent {
 		distancetravelled = 0;
 		timer = new HardwareTimer();
 		lastTime = timer.getFPGATimestamp();
+		gyro = new AHRS(SerialPort.Port.kMXP);
 	}
 	
 	//This method is called at the start of Autonomous
@@ -254,6 +258,24 @@ public class MecanumDriveTrain implements RobotComponent {
 	public Boolean turnDegrees(double degrees, double speed)
 	{
 		return false;
+	}
+	
+	public Boolean turntoAngle(double degrees, double speed)
+	{
+		if(degrees>gyro.getYaw())
+		{
+			Drivetrain.mecanumDrive_Cartesian(0, 0, speed, 0);
+			return false;
+		}
+		else if (degrees==gyro.getYaw())
+		{
+			return true;
+		}
+		else
+		{
+			Drivetrain.mecanumDrive_Cartesian(0, 0, -speed, 0);
+			return false;
+		}
 	}
 	
 	public Boolean alignWithPeg()
