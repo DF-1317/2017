@@ -48,6 +48,7 @@ public class GearMechanism implements RobotComponent {
 	public void TeleopUpdate() {
 		//when button 2 is pressed
 		
+		ManualOverrideControl();
 		if(control.getRawButton(2))
 		{
 			//if the door is opne close the door, unless the piston is out
@@ -149,7 +150,7 @@ public class GearMechanism implements RobotComponent {
 
 	}
 	
-	public void ManualOverideControl()
+	public void ManualOverrideControl()
 	{
 		//increment the counter when it is manual override
 		if(ManualOverride)
