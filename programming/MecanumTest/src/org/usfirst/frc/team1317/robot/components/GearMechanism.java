@@ -48,6 +48,7 @@ public class GearMechanism implements RobotComponent {
 	public void TeleopUpdate() {
 		//when button 2 is pressed
 		
+		
 		ManualOverrideControl();
 		if(control.getRawButton(2))
 		{
