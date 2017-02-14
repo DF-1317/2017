@@ -33,7 +33,7 @@ public class GearMechanism implements RobotComponent {
 	@Override
 	public void AutoStart() {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	//this method is called every 20 milliseconds during Autonomous
