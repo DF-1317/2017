@@ -100,7 +100,7 @@ public class GearMechanism implements RobotComponent {
 			if (ManualOverride)
 			{
 				DoorOpener.set(true);
-				DoorOpen = false;
+				DoorOpen = true;
 				System.out.println("Manually overriden.");
 				return true;
 			}
