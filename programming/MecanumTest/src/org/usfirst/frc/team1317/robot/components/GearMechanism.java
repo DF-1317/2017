@@ -11,6 +11,8 @@ public class GearMechanism implements RobotComponent {
 	Joystick control;
 	Boolean ManualOverride;
 	byte counter;
+	Boolean oldButton2State;
+	Boolean oldTriggerState;
 	
 	public GearMechanism(Joystick j)
 	{
@@ -26,7 +28,8 @@ public class GearMechanism implements RobotComponent {
 		DoorOpen = false;
 		PistonOut = false;
 		GearCompressor = new Compressor();
-		
+		oldButton2State = false;
+		oldTriggerState = false;
 	}
 	
 	//This method is called at the start of Autonomous
@@ -46,14 +49,14 @@ public class GearMechanism implements RobotComponent {
 	//This method is called every 20 milliseconds during Teleop
 	@Override
 	public void TeleopUpdate() {
-		//when button 2 is pressed
-		
-		
+		Boolean currentButton2 = control.getRawButton(2);
+		Boolean currentTrigger = control.getTrigger();
 		ManualOverrideControl();
-		if(control.getRawButton(2))
+		//when button 2 is pressed
+		if(currentButton2 && !oldButton2State)
 		{
 			//if the door is opne close the door, unless the piston is out
-			if(DoorOpen) {
+			if(DoorOpener.get()) {
 				tryCloseDoor();
 			}
 			//if the door is closed open the door.
@@ -63,17 +66,17 @@ public class GearMechanism implements RobotComponent {
 		}
 		
 		//when the trigger is pressed
-		if(control.getTrigger())
+		if(currentTrigger && !oldTriggerState)
 		{
 			//if the piston is out, bring the piston in.
-			if (PistonOut)
+			if (GearPusher.get())
 			{
 				retractGearPiston();
 			}
 			//if the piston is in
 			else
 			{
-				this.trypushGear();
+				trypushGear();
 			}	
 		}
 		
@@ -81,6 +84,9 @@ public class GearMechanism implements RobotComponent {
 		{
 			GearCompressor.stop();
 		}
+		
+		oldButton2State = currentButton2;
+		oldTriggerState = currentTrigger;
 	}
 
 	public void openDoor()
@@ -118,6 +124,7 @@ public class GearMechanism implements RobotComponent {
 	public void retractGearPiston()
 	{
 		GearPusher.set(false);
+		System.out.println("retracted piston");
 		PistonOut = false;
 	}
 	

@@ -10,6 +10,9 @@ import com.kauailabs.navx.frc.*;
 
 public class MecanumDriveTrain implements RobotComponent {
 
+	public static double turningConstant =0.03;
+	public static double sidewaysConstant = 0.6;
+	
 	
 	//variables to hold motor controller objects.
 	CANTalon FLMotor;
@@ -82,6 +85,7 @@ public class MecanumDriveTrain implements RobotComponent {
 		lastTime = timer.getFPGATimestamp();
 		gyro = new AHRS(SerialPort.Port.kMXP);
 		motorsReversed = false;
+		System.out.println("NavX-MXP firmware: "+ gyro.getFirmwareVersion());
 	}
 	
 	//This method is called at the start of Autonomous
@@ -242,7 +246,7 @@ public class MecanumDriveTrain implements RobotComponent {
 			//if we have not got there yet keep driving.
 			//I will need to multiply the acceleration by a variable.
 			//drives forward at the correct speed and corrects for drifting sideways and turning.
-			Drivetrain.mecanumDrive_Cartesian(-accel.getZ(), speed, 0, 0); //the input after speed should be a gyro sensors angle multiplied by a constant (the robot should turn in the opposite direction than it is currently driving so it drives straight)
+			Drivetrain.mecanumDrive_Cartesian(-turningConstant*accel.getZ(), speed, turningConstant*(gyro.getYaw()-heading), 0); //the input after speed should be a gyro sensors angle multiplied by a constant (the robot should turn in the opposite direction than it is currently driving so it drives straight)
 			return false;
 		}
 	}
