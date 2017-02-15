@@ -79,6 +79,7 @@ public class MecanumDriveTrain implements RobotComponent {
 		//none of the buttons were originally pressed.
 		oldButton2State = false;
 		oldButton11State = false;
+		oldTurnButton11State = false;
 		accel = new BuiltInAccelerometer();
 		distancetravelled = 0;
 		timer = new HardwareTimer();
@@ -199,7 +200,8 @@ public class MecanumDriveTrain implements RobotComponent {
 		//the current button states are now the old button states.
 		oldButton2State = currentButton2State;
 		oldButton11State = currentButton11State;
-	}
+		oldTurnButton11State = currentTurnButton11;
+1	}
 
 	@Override
 	public void TestUpdate() {
@@ -214,7 +216,6 @@ public class MecanumDriveTrain implements RobotComponent {
 	//I might also want to look into using PID control.
 	//This method would be called every 20 milliseconds in the autonomous code.
 	//It will make the robot drive forward the distance specified(approximately)
-	//I also need to figure out a way to reset the velocity to zero when the robot is still.
 	public boolean DriveForward(double distance, double speed, double heading) {
 		//gets the current time
 		double currentTime = timer.getFPGATimestamp();
@@ -246,7 +247,7 @@ public class MecanumDriveTrain implements RobotComponent {
 			//if we have not got there yet keep driving.
 			//I will need to multiply the acceleration by a variable.
 			//drives forward at the correct speed and corrects for drifting sideways and turning.
-			Drivetrain.mecanumDrive_Cartesian(-turningConstant*accel.getZ(), speed, turningConstant*(gyro.getYaw()-heading), 0); //the input after speed should be a gyro sensors angle multiplied by a constant (the robot should turn in the opposite direction than it is currently driving so it drives straight)
+			Drivetrain.mecanumDrive_Cartesian(-turningConstant*accel.getZ(), speed, -turningConstant*(gyro.getYaw()-heading), 0); //the input after speed should be a gyro sensors angle multiplied by a constant (the robot should turn in the opposite direction than it is currently driving so it drives straight)
 			return false;
 		}
 	}
