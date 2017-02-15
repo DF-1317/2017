@@ -81,6 +81,7 @@ public class MecanumDriveTrain implements RobotComponent {
 		timer = new HardwareTimer();
 		lastTime = timer.getFPGATimestamp();
 		gyro = new AHRS(SerialPort.Port.kMXP);
+		motorsReversed = false;
 	}
 	
 	//This method is called at the start of Autonomous
