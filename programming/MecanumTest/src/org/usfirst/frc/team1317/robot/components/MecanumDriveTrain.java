@@ -216,6 +216,7 @@ public class MecanumDriveTrain implements RobotComponent {
 	//I might also want to look into using PID control.
 	//This method would be called every 20 milliseconds in the autonomous code.
 	//It will make the robot drive forward the distance specified(approximately)
+	//distance is in inches
 	public boolean DriveForward(double distance, double speed, double heading) {
 		//gets the current time
 		double currentTime = timer.getFPGATimestamp();
@@ -224,7 +225,7 @@ public class MecanumDriveTrain implements RobotComponent {
 		//gets the current acceleration
 		double currentAcceleration = accel.getX();
 		//calculates the change in velocity by averaging the current acceleration and the old acceleration, converting the acceleration to ft/s^2, and multiplying by change in time
-		double changeInVelocity = (oldAcceleration+currentAcceleration)*32.174/2 *changeInTime;
+		double changeInVelocity = (oldAcceleration+currentAcceleration)*32.174*12/2 *changeInTime;
 		//adds the change in velocity to the velocity
 		velocity+=changeInVelocity;
 		//calculates the change in position from the velocity by averaging the current and old velocity and multiplying by the change in time.
