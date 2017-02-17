@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.*;
 import org.usfirst.frc.team1317.robot.components.*;
+import com.kauailabs.navx.frc.*; 
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -31,6 +32,10 @@ public class Robot extends IterativeRobot {
 	GearMechanism gearMechanism;
 	Climber climber;
 	
+	AHRS ahrs;
+	
+	PIDDriveDistance driveForward;
+	PIDTurning turner;
 		
 
 	/**
@@ -58,6 +63,9 @@ public class Robot extends IterativeRobot {
 		//initializes the gear Mechanism, with what joystick to use.
 		gearMechanism = new GearMechanism(OtherJoystick);
 		AutoStep = 0;
+		ahrs = new AHRS(SerialPort.Port.kMXP);
+		turner = new PIDTurning(driveTrain,ahrs);
+		driveForward = new PIDDriveDistance(driveTrain,ahrs);
 	}
 
 	/**
@@ -281,9 +289,22 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
+		if (AutoStep == 0) {
+			driveForward.resetDistance();
+		}
+		if (MoveJoystick.getTrigger()) {
+			driveForward.driveForward(12, 0.5, 0);
+		}
+		if (TurnJoystick.getTrigger()) {
+			turner.TurnToDegrees(60, 0.5);
+		}
+		if (TurnJoystick.getRawButton(2)){
+			ahrs.zeroYaw();
+		}
 		driveTrain.TestUpdate();
 		climber.TestUpdate();
 		gearMechanism.TestUpdate();
 	}
+	
 }
 
