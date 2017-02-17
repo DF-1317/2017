@@ -145,7 +145,8 @@ public class MecanumDriveTrain implements RobotComponent {
 		{
 			//scales the throttle so that it ranges from .1 to 1.0 instead of -1.0 to 1.0
 			double throttle = -MoveJoystick.getThrottle();
-			speedMultiplier = 0.45*throttle+0.55;
+			speedMultiplier = 0.425*throttle+0.575;
+			//to scale to a range of 0.1 to 1.0 use 0.45*throttle+0.55
 		}
 		else if (!throttleOn)
 			//if there is no throttle, we can go at full speed.
