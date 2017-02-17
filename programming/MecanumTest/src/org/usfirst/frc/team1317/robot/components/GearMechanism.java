@@ -97,7 +97,7 @@ public class GearMechanism implements RobotComponent {
 	
 	public Boolean tryCloseDoor()
 	{
-		if (!PistonOut) {
+		if (!GearPusher.get()) {
 			DoorOpener.set(false);
 			DoorOpen = false;
 			return true;
@@ -131,8 +131,9 @@ public class GearMechanism implements RobotComponent {
 	public Boolean trypushGear()
 	{
 		//push the piston out if the door is open.
-		if (DoorOpen){
+		if (DoorOpener.get()){
 			GearPusher.set(true);
+			PistonOut = true;
 			return true;
 		}
 		else
