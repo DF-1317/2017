@@ -2,7 +2,6 @@ package org.usfirst.frc.team1317.robot;
 
 import org.usfirst.frc.team1317.robot.components.MecanumDriveTrain;
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.*;
 
