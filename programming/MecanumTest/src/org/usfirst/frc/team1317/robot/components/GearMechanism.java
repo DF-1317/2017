@@ -17,8 +17,8 @@ public class GearMechanism implements RobotComponent {
 	public GearMechanism(Joystick j)
 	{
 		//creates new solenoids
-		DoorOpener = new Solenoid(RobotPorts.DoorSolenoidPort);
-		GearPusher = new Solenoid(RobotPorts.PusherSolenoidPort1);
+		DoorOpener = new Solenoid(RobotPorts.doorSolenoidPortPractice);
+		GearPusher = new Solenoid(RobotPorts.PusherSolenoidPortPractice);
 		//saves the joystick that was input
 		control = j;
 		//sets values to default

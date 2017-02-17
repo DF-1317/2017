@@ -10,10 +10,13 @@ public class RobotPorts {
 	// static int's of motor ports used in 'Climber.java'
 	public static int CMotorPort = 5;
 	
-	public static int DoorSolenoidPort =0;
-	public static int DoorSolenoidPort2 =2;
-	public static int PusherSolenoidPort1=1;
-	public static int PusherSolenoidPort2=3;
+	public static int doorSolenoidPortPractice =0;
+	public static int PusherSolenoidPortPractice=1;
+	
+	public static int doorSolenoidPortCompetition =0;
+	public static int doorSolenoidPortCompetition2 = 1;
+	public static int PusherSolenoidPortCompetition =2;
+	public static int PusherSolenoidPortCompetition2 =3;
 	
 	// static int's of joysticks
 	public static int TurnJoystickPort = 1;
