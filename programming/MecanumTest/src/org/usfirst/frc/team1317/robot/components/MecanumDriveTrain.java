@@ -3,6 +3,7 @@ package org.usfirst.frc.team1317.robot.components;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.internal.HardwareTimer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team1317.robot.*;
 import com.ctre.*;
@@ -118,6 +119,7 @@ public class MecanumDriveTrain implements RobotComponent {
 		{
 			//toggle whether the throttle is on or not
 			toggleThrottleControl();
+			SmartDashboard.putBoolean("Throttle On", throttleOn);
 		}
 		
 		//if button 11 is pressed but was not the last time.
@@ -129,16 +131,19 @@ public class MecanumDriveTrain implements RobotComponent {
 			if (throttleLock == true)
 			{
 				System.out.println("Throttle Lock is On");
+				
 			}
 			else
 			{
 				System.out.println("Throttle Lock is Off");
 			}
+			SmartDashboard.putBoolean("ThrottleLock", throttleLock);
 		}
 		
 		if(currentTurnButton11 == true && oldTurnButton11State==false)
 		{
 			motorsReversed = !motorsReversed;
+			SmartDashboard.putBoolean("Direction Reversed", motorsReversed);
 		}
 		//if the throttle is not locked and is on.
 		if(throttleOn && !throttleLock)
@@ -151,7 +156,8 @@ public class MecanumDriveTrain implements RobotComponent {
 		else if (!throttleOn)
 			//if there is no throttle, we can go at full speed.
 			speedMultiplier = 1.0;
-				
+		
+		SmartDashboard.putNumber("Throttle Value", speedMultiplier);
 		//if the button to turn on mode 0 is on
 		if (currentMode0ButtonState == true)
 		{
