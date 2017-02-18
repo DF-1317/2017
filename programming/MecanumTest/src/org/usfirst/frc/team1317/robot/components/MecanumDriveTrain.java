@@ -87,8 +87,12 @@ public class MecanumDriveTrain implements RobotComponent {
 		lastTime = timer.getFPGATimestamp();
 		gyro = new AHRS(SerialPort.Port.kMXP);
 		motorsReversed = false;
-		System.out.println("NavX-MXP firmware: "+ gyro.getFirmwareVersion());
-	}
+		SmartDashboard.putBoolean("ThrottleLock", throttleLock);
+		SmartDashboard.putBoolean("Throttle On", throttleOn);
+		SmartDashboard.putBoolean("Direction Reversed", motorsReversed);
+		double initialThrottleValue =-0.425*MoveJoystick.getThrottle()+0.575;
+		SmartDashboard.putNumber("Throttle Value", initialThrottleValue);		
+		}
 	
 	//This method is called at the start of Autonomous
 	@Override

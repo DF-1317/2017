@@ -1,5 +1,7 @@
 package org.usfirst.frc.team1317.robot.components;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import org.usfirst.frc.team1317.robot.*;
 import com.ctre.*;
 /**
@@ -19,6 +21,8 @@ public class Climber implements RobotComponent {
 		//This method should initialize everything (similar to RobotInit())
 		CMotor = new CANTalon (RobotPorts.CMotorPort);
 		OtherJoystick=j;
+		SmartDashboard.putNumber("Climber Voltage", CMotor.getOutputVoltage());
+		SmartDashboard.putNumber("Climber Current", CMotor.getOutputCurrent());
 	}
 
 	//This method is called at the start of Autonomous
@@ -48,6 +52,8 @@ public class Climber implements RobotComponent {
 		{
 			CMotor.set(0);
 		}
+		SmartDashboard.putNumber("Climber Voltage", CMotor.getOutputVoltage());
+		SmartDashboard.putNumber("Climber Current", CMotor.getOutputCurrent());
 
 	}
 

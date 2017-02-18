@@ -1,5 +1,7 @@
 package org.usfirst.frc.team1317.robot.components;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import org.usfirst.frc.team1317.robot.*;
 public class GearMechanism implements RobotComponent {
 	
@@ -30,6 +32,8 @@ public class GearMechanism implements RobotComponent {
 		GearCompressor = new Compressor();
 		oldButton2State = false;
 		oldTriggerState = false;
+		SmartDashboard.putBoolean("Door Opened", DoorOpener.get());
+		SmartDashboard.putBoolean("Gear Pusher out", GearPusher.get());
 	}
 	
 	//This method is called at the start of Autonomous
@@ -63,6 +67,7 @@ public class GearMechanism implements RobotComponent {
 			else {
 				openDoor();
 			}
+			SmartDashboard.putBoolean("Door Opened", DoorOpener.get());
 		}
 		
 		//when the trigger is pressed
@@ -77,7 +82,8 @@ public class GearMechanism implements RobotComponent {
 			else
 			{
 				trypushGear();
-			}	
+			}
+			SmartDashboard.putBoolean("Gear Pusher out", GearPusher.get());
 		}
 		
 		if(Timer.getMatchTime()>120)
