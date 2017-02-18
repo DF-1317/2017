@@ -51,19 +51,19 @@ public class Robot extends IterativeRobot {
 		chooser.addObject("Cross the Baseline", crossingAuto);
 		SmartDashboard.putData("Auto choices", chooser);
 		
-		
+		//initializes the NavX-MXP
+		ahrs = new AHRS(SerialPort.Port.kMXP);
 		//initializes the joystick objects
 		TurnJoystick = new Joystick(RobotPorts.TurnJoystickPort);
 		MoveJoystick = new Joystick(RobotPorts.MoveJoystickPort);
 		OtherJoystick = new Joystick(RobotPorts.OtherJoystickPort);
 		//initializes drivetrain, telling it what joystick to use
-		driveTrain = new MecanumDriveTrain(MoveJoystick, TurnJoystick);
+		driveTrain = new MecanumDriveTrain(MoveJoystick, TurnJoystick, ahrs);
 		//initializes climber with what joystick to control
 		climber = new Climber(OtherJoystick);
 		//initializes the gear Mechanism, with what joystick to use.
 		gearMechanism = new GearMechanism(OtherJoystick);
 		AutoStep = 0;
-		ahrs = new AHRS(SerialPort.Port.kMXP);
 		turner = new PIDTurning(driveTrain,ahrs);
 		driveForward = new PIDDriveDistance(driveTrain,ahrs);
 	}

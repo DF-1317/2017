@@ -59,7 +59,7 @@ public class MecanumDriveTrain implements RobotComponent {
 	
 	AHRS gyro;
 	
-	public MecanumDriveTrain(Joystick move, Joystick turn)
+	public MecanumDriveTrain(Joystick move, Joystick turn, AHRS NavX)
 	{
 		//Initializes motor objects
 		FLMotor = new CANTalon (RobotPorts.FLMotorPort);
@@ -85,7 +85,7 @@ public class MecanumDriveTrain implements RobotComponent {
 		distancetravelled = 0;
 		timer = new HardwareTimer();
 		lastTime = timer.getFPGATimestamp();
-		gyro = new AHRS(SerialPort.Port.kMXP);
+		gyro = NavX;
 		motorsReversed = false;
 		SmartDashboard.putBoolean("ThrottleLock", throttleLock);
 		SmartDashboard.putBoolean("Throttle On", throttleOn);
