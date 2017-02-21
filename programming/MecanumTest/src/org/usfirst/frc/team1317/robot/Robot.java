@@ -62,6 +62,7 @@ public class Robot extends IterativeRobot {
 		//initializes climber with what joystick to control
 		climber = new Climber(OtherJoystick);
 		//initializes the gear Mechanism, with what joystick to use.
+		//change this based on which robot we are deploying code to.
 		gearMechanism = new GearMechanismSingleSolenoid(OtherJoystick);
 		AutoStep = 0;
 		turner = new PIDTurning(driveTrain,ahrs);
