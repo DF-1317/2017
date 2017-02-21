@@ -94,6 +94,7 @@ public class GearMechanismSingleSolenoid implements GearMechanism {
 		oldTriggerState = currentTrigger;
 	}
 
+	@Override
 	public void openDoor()
 	{
 		DoorOpener.set(true);
@@ -126,6 +127,7 @@ public class GearMechanismSingleSolenoid implements GearMechanism {
 		}
 	}
 	
+	@Override
 	public void retractGearPiston()
 	{
 		GearPusher.set(false);
@@ -133,6 +135,7 @@ public class GearMechanismSingleSolenoid implements GearMechanism {
 		PistonOut = false;
 	}
 	
+	@Override
 	public Boolean trypushGear()
 	{
 		//push the piston out if the door is open.
@@ -164,6 +167,7 @@ public class GearMechanismSingleSolenoid implements GearMechanism {
 
 	}
 	
+	@Override
 	public void ManualOverrideControl()
 	{
 		//increment the counter when it is manual override
