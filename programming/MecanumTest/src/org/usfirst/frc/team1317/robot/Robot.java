@@ -1,6 +1,7 @@
 package org.usfirst.frc.team1317.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.hal.PortsJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.*;
@@ -51,7 +52,7 @@ public class Robot extends IterativeRobot {
 		chooser.addObject("Cross the Baseline", crossingAuto);
 		SmartDashboard.putData("Auto choices", chooser);
 		
-		//initializes the NavX-MXP
+		//initializes the NavX-MXP	
 		ahrs = new AHRS(SerialPort.Port.kMXP);
 		//initializes the joystick objects
 		TurnJoystick = new Joystick(RobotPorts.TurnJoystickPort);
@@ -67,6 +68,7 @@ public class Robot extends IterativeRobot {
 		AutoStep = 0;
 		turner = new PIDTurning(driveTrain,ahrs);
 		driveForward = new PIDDriveDistance(driveTrain,ahrs);
+		SmartDashboard.putNumber("Number of Solenoids", PortsJNI.getNumSolenoidChannels());
 	}
 
 	/**
