@@ -30,7 +30,7 @@ public class Robot extends IterativeRobot {
 	Joystick OtherJoystick;
 	
 	MecanumDriveTrain driveTrain;
-	GearMechanismSingleSolenoid gearMechanism;
+	GearMechanism gearMechanism;
 	Climber climber;
 	
 	AHRS ahrs;
@@ -64,7 +64,7 @@ public class Robot extends IterativeRobot {
 		climber = new Climber(OtherJoystick);
 		//initializes the gear Mechanism, with what joystick to use.
 		//change this based on which robot we are deploying code to.
-		gearMechanism = new GearMechanismSingleSolenoid(OtherJoystick);
+		gearMechanism = new GearMechanismDoubleSolenoid(OtherJoystick);
 		AutoStep = 0;
 		turner = new PIDTurning(driveTrain,ahrs);
 		driveForward = new PIDDriveDistance(driveTrain,ahrs);
@@ -285,8 +285,8 @@ public class Robot extends IterativeRobot {
 		
 		//Moving joystick 0 forward and back controls the climber motor.
 		climber.TeleopUpdate(); //uses the joysticks to control the climber.
-		SmartDashboard.putNumber("Acceleration X NavX", ahrs.getWorldLinearAccelX());
-		SmartDashboard.putNumber("Acceleration Y NavX",ahrs.getWorldLinearAccelY());
+		//SmartDashboard.putNumber("Acceleration X NavX", ahrs.getWorldLinearAccelX());
+		//SmartDashboard.putNumber("Acceleration Y NavX",ahrs.getWorldLinearAccelY());
 		
 	}
 

@@ -55,6 +55,12 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 	public void TeleopUpdate() {
 		Boolean currentButton2 = control.getRawButton(2);
 		Boolean currentTrigger = control.getTrigger();
+		Boolean currentButton3 = control.getRawButton(3);
+		Boolean currentButton4 = control.getRawButton(4);
+		
+		if(currentButton3) GearPusher.set(DoubleSolenoid.Value.kForward);
+		if(currentButton4) GearPusher.set(DoubleSolenoid.Value.kReverse);
+		
 		ManualOverrideControl();
 		//when button 2 is pressed
 		if(currentButton2 && !oldButton2State)
