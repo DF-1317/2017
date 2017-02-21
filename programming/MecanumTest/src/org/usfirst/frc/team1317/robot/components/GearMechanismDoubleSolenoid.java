@@ -32,9 +32,8 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		GearCompressor = new Compressor();
 		oldButton2State = false;
 		oldTriggerState = false;
-		//Todo: change these to work with double Solenoids
-		//SmartDashboard.putBoolean("Door Opened", DoorOpener.get());
-		//SmartDashboard.putBoolean("Gear Pusher out", GearPusher.get());
+		putDataToSmartDashboard();
+		
 	}
 	
 	//This method is called at the start of Autonomous
@@ -68,7 +67,7 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 			else {
 				openDoor();
 			}
-			//SmartDashboard.putBoolean("Door Opened", DoorOpener.get());
+			putDataToSmartDashboard();
 		}
 		
 		//when the trigger is pressed
@@ -84,7 +83,7 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 			{
 				trypushGear();
 			}
-			//SmartDashboard.putBoolean("Gear Pusher out", GearPusher.get());
+			putDataToSmartDashboard();
 		}
 		
 		if(Timer.getMatchTime()>120)
@@ -192,6 +191,30 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 			counter = 0;
 		}
 		
+	}
+	
+	void putDataToSmartDashboard()
+	{
+		Boolean pistonout;
+		Boolean dooropened;
+		if(DoorOpener.get()==DoubleSolenoid.Value.kForward)
+		{
+			dooropened = true;
+		}
+		else
+		{
+			dooropened = false;
+		}
+		if(GearPusher.get()==DoubleSolenoid.Value.kForward)
+		{
+			pistonout = true;
+		}
+		else
+		{
+			pistonout = false;
+		}
+		SmartDashboard.putBoolean("Door Opened", dooropened);
+		SmartDashboard.putBoolean("Gear Pusher out", pistonout);
 	}
 
 }
