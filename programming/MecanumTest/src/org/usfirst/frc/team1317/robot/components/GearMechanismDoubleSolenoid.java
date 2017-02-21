@@ -6,8 +6,8 @@ import org.usfirst.frc.team1317.robot.*;
 public class GearMechanismDoubleSolenoid implements GearMechanism {
 	
     Compressor GearCompressor;
-	Solenoid DoorOpener;
-	Solenoid GearPusher;
+	DoubleSolenoid DoorOpener;
+	DoubleSolenoid GearPusher;
 	Boolean DoorOpen;
 	Boolean PistonOut;
 	Joystick control;
@@ -19,8 +19,8 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 	public GearMechanismDoubleSolenoid(Joystick j)
 	{
 		//creates new solenoids
-		DoorOpener = new Solenoid(RobotPorts.doorSolenoidPortPractice);
-		GearPusher = new Solenoid(RobotPorts.PusherSolenoidPortPractice);
+		DoorOpener = new DoubleSolenoid(RobotPorts.doorSolenoidPortCompetition, RobotPorts.doorSolenoidPortCompetition2);
+		GearPusher = new DoubleSolenoid(RobotPorts.PusherSolenoidPortCompetition, RobotPorts.PusherSolenoidPortCompetition2);
 		//saves the joystick that was input
 		control = j;
 		//sets values to default
@@ -32,8 +32,9 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		GearCompressor = new Compressor();
 		oldButton2State = false;
 		oldTriggerState = false;
-		SmartDashboard.putBoolean("Door Opened", DoorOpener.get());
-		SmartDashboard.putBoolean("Gear Pusher out", GearPusher.get());
+		//Todo: change these to work with double Solenoids
+		//SmartDashboard.putBoolean("Door Opened", DoorOpener.get());
+		//SmartDashboard.putBoolean("Gear Pusher out", GearPusher.get());
 	}
 	
 	//This method is called at the start of Autonomous
@@ -60,21 +61,21 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		if(currentButton2 && !oldButton2State)
 		{
 			//if the door is opne close the door, unless the piston is out
-			if(DoorOpener.get()) {
+			if(DoorOpener.get()==DoubleSolenoid.Value.kForward) {
 				tryCloseDoor();
 			}
 			//if the door is closed open the door.
 			else {
 				openDoor();
 			}
-			SmartDashboard.putBoolean("Door Opened", DoorOpener.get());
+			//SmartDashboard.putBoolean("Door Opened", DoorOpener.get());
 		}
 		
 		//when the trigger is pressed
 		if(currentTrigger && !oldTriggerState)
 		{
 			//if the piston is out, bring the piston in.
-			if (GearPusher.get())
+			if (GearPusher.get()==DoubleSolenoid.Value.kForward)
 			{
 				retractGearPiston();
 			}
@@ -83,7 +84,7 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 			{
 				trypushGear();
 			}
-			SmartDashboard.putBoolean("Gear Pusher out", GearPusher.get());
+			//SmartDashboard.putBoolean("Gear Pusher out", GearPusher.get());
 		}
 		
 		if(Timer.getMatchTime()>120)
@@ -97,23 +98,23 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 
 	public void openDoor()
 	{
-		DoorOpener.set(true);
+		DoorOpener.set(DoubleSolenoid.Value.kForward);
 		DoorOpen = true;
 	}
 	
 	public Boolean tryCloseDoor()
 	{
-		if (!GearPusher.get()) {
-			DoorOpener.set(false);
+		if (GearPusher.get()==DoubleSolenoid.Value.kForward) {
+			DoorOpener.set(DoubleSolenoid.Value.kReverse);
 			DoorOpen = false;
 			return true;
 		}
 		else 
 		{
-			//if manual override is set open the door anyway.
+			//if manual override is set close the door anyway.
 			if (ManualOverride)
 			{
-				DoorOpener.set(true);
+				DoorOpener.set(DoubleSolenoid.Value.kReverse);
 				DoorOpen = true;
 				System.out.println("Manually overriden.");
 				return true;
@@ -129,7 +130,7 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 	
 	public void retractGearPiston()
 	{
-		GearPusher.set(false);
+		GearPusher.set(DoubleSolenoid.Value.kReverse);
 		System.out.println("retracted piston");
 		PistonOut = false;
 	}
@@ -137,8 +138,8 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 	public Boolean trypushGear()
 	{
 		//push the piston out if the door is open.
-		if (DoorOpener.get()){
-			GearPusher.set(true);
+		if (DoorOpener.get()==DoubleSolenoid.Value.kForward){
+			GearPusher.set(DoubleSolenoid.Value.kForward);
 			PistonOut = true;
 			return true;
 		}
@@ -146,7 +147,7 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		{
 			if(ManualOverride)
 			{
-				GearPusher.set(false);
+				GearPusher.set(DoubleSolenoid.Value.kForward);
 				PistonOut = false;
 				System.out.println("Manually Overridden");
 				return true;
