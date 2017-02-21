@@ -29,7 +29,7 @@ public class Robot extends IterativeRobot {
 	Joystick OtherJoystick;
 	
 	MecanumDriveTrain driveTrain;
-	GearMechanismDoubleSolenoid gearMechanism;
+	GearMechanism gearMechanism;
 	Climber climber;
 	
 	AHRS ahrs;
