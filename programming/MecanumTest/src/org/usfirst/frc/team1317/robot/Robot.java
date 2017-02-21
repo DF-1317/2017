@@ -29,7 +29,7 @@ public class Robot extends IterativeRobot {
 	Joystick OtherJoystick;
 	
 	MecanumDriveTrain driveTrain;
-	GearMechanismSingleSolenoid gearMechanism;
+	GearMechanismDoubleSolenoid gearMechanism;
 	Climber climber;
 	
 	AHRS ahrs;
@@ -63,7 +63,7 @@ public class Robot extends IterativeRobot {
 		climber = new Climber(OtherJoystick);
 		//initializes the gear Mechanism, with what joystick to use.
 		//change this based on which robot we are deploying code to.
-		gearMechanism = new GearMechanismSingleSolenoid(OtherJoystick);
+		gearMechanism = new GearMechanismDoubleSolenoid(OtherJoystick);
 		AutoStep = 0;
 		turner = new PIDTurning(driveTrain,ahrs);
 		driveForward = new PIDDriveDistance(driveTrain,ahrs);
