@@ -172,7 +172,20 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 	@Override
 	public void TestUpdate() {
 		// TODO Auto-generated method stub
-
+		if (control.getRawButton(5)){
+			GearPusher.set(DoubleSolenoid.Value.kForward);
+		}
+		if (control.getRawButton(3))
+		{
+			GearPusher.set(DoubleSolenoid.Value.kReverse);
+		}
+		if (control.getRawButton(6)){
+			DoorOpener.set(DoubleSolenoid.Value.kForward);
+		}
+		if (control.getRawButton(4))
+		{
+			DoorOpener.set(DoubleSolenoid.Value.kReverse);
+		}
 	}
 	
 	@Override

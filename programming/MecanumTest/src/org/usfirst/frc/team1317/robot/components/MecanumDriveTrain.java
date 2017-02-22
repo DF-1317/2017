@@ -59,7 +59,7 @@ public class MecanumDriveTrain implements RobotComponent {
 	
 	AHRS gyro;
 	
-	public MecanumDriveTrain(Joystick move, Joystick turn, AHRS NavX)
+	public MecanumDriveTrain(Joystick move, Joystick turn, AHRS NavX) //add AHRS Navx to the code
 	{
 		//Initializes motor objects
 		FLMotor = new CANTalon (RobotPorts.FLMotorPort);

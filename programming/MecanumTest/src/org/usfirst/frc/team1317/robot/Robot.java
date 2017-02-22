@@ -59,7 +59,7 @@ public class Robot extends IterativeRobot {
 		MoveJoystick = new Joystick(RobotPorts.MoveJoystickPort);
 		OtherJoystick = new Joystick(RobotPorts.OtherJoystickPort);
 		//initializes drivetrain, telling it what joystick to use
-		driveTrain = new MecanumDriveTrain(MoveJoystick, TurnJoystick, ahrs);
+		driveTrain = new MecanumDriveTrain(MoveJoystick, TurnJoystick, ahrs);//remember to add ahrs
 		//initializes climber with what joystick to control
 		climber = new Climber(OtherJoystick);
 		//initializes the gear Mechanism, with what joystick to use.
@@ -295,8 +295,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
+		
 		if (AutoStep == 0) {
 			driveForward.resetDistance();
+			AutoStep++;
 		}
 		if (MoveJoystick.getTrigger()) {
 			driveForward.driveForward(12, 0.5, 0);
@@ -310,6 +312,7 @@ public class Robot extends IterativeRobot {
 		if (MoveJoystick.getRawButton(2)){
 			driveForward.resetDistance();
 		}
+		
 		driveTrain.TestUpdate();
 		climber.TestUpdate();
 		gearMechanism.TestUpdate();
