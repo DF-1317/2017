@@ -13,10 +13,10 @@ public class RobotPorts {
 	public static int doorSolenoidPortPractice =0;
 	public static int PusherSolenoidPortPractice=1;
 	
-	public static int doorSolenoidPortCompetition =0;
-	public static int doorSolenoidPortCompetition2 = 1;
-	public static int PusherSolenoidPortCompetition =3;
-	public static int PusherSolenoidPortCompetition2 =2;
+	public static int doorSolenoidPortCompetition =3;
+	public static int doorSolenoidPortCompetition2 = 2;
+	public static int PusherSolenoidPortCompetition =0;
+	public static int PusherSolenoidPortCompetition2 =1;
 	// static int's of joysticks
 	public static int TurnJoystickPort = 1;
 	public static int MoveJoystickPort = 2;
