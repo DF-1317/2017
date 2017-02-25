@@ -1,0 +1,8 @@
+#!/bin/bash
+
+#
+# To build:
+# javac -cp jackson-jr.jar UDPServer.java
+#
+
+java -cp .:jackson-jr.jar UDPServer

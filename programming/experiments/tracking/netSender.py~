@@ -1,0 +1,16 @@
+""" Test sending a stream of encoded double bytes via udp
+
+"""
+import socket
+import time
+
+IPADDR  = 'localhost'
+PORTNUM = 5000
+
+netSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
+# netSock.connect((IPADDR,PORTNUM))
+
+while(1):
+  msg = 'Hi'
+  netSock.sendto(msg,(IPADDR,PORTNUM))
+  time.sleep(3000)
