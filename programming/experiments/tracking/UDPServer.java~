@@ -1,0 +1,13 @@
+import java.io.*;
+import java.net.*;
+
+class UDPServer {
+  public static void main(String args[]) throws Exception {
+    DatagramSocket serverSocket = new DatagramSocket(5000);
+    byte[] rData = new byte[1024];
+    byte[] sData = new byte[1024];
+    
+    while(true) {
+    }
+  }
+}
