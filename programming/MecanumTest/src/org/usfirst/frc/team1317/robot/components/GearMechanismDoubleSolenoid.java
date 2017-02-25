@@ -15,6 +15,8 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 	byte counter;
 	Boolean oldButton2State;
 	Boolean oldTriggerState;
+	Boolean reset;
+	Timer resetTime;
 	
 	public GearMechanismDoubleSolenoid(Joystick j)
 	{
@@ -33,7 +35,8 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		oldButton2State = false;
 		oldTriggerState = false;
 		putDataToSmartDashboard();
-		
+		reset = false;
+		resetTime = new Timer();
 	}
 	
 	//This method is called at the start of Autonomous
@@ -69,6 +72,12 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 			if(DoorOpener.get()==DoubleSolenoid.Value.kForward) {
 				tryCloseDoor();
 			}
+			else if (DoorOpener.get() == DoubleSolenoid.Value.kReverse&&GearPusher.get()==DoubleSolenoid.Value.kForward)
+			{
+				reset = true;
+				resetTime.reset();
+				resetTime.start();
+			}
 			//if the door is closed open the door.
 			else {
 				openDoor();
@@ -80,14 +89,20 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		if(currentTrigger && !oldTriggerState)
 		{
 			//if the piston is out, bring the piston in.
-			if (GearPusher.get()==DoubleSolenoid.Value.kForward)
+			if (GearPusher.get()==DoubleSolenoid.Value.kReverse)
 			{
-				retractGearPiston();
+				trypushGear();
+			}
+			else if (DoorOpener.get() == DoubleSolenoid.Value.kReverse&&GearPusher.get()==DoubleSolenoid.Value.kForward)
+			{
+				reset = true;
+				resetTime.reset();
+				resetTime.start();
 			}
 			//if the piston is in
 			else
 			{
-				trypushGear();
+				retractGearPiston();
 			}
 			putDataToSmartDashboard();
 		}
@@ -95,6 +110,18 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		if(Timer.getMatchTime()>120)
 		{
 			GearCompressor.stop();
+		}
+		if(reset)
+		{
+			if(GearPusher.get()==DoubleSolenoid.Value.kForward)
+			{
+				GearPusher.set(DoubleSolenoid.Value.kReverse);
+			}
+			if(resetTime.get()>=0.5)
+			{
+				DoorOpener.set(DoubleSolenoid.Value.kForward);
+				reset = false;
+			}
 		}
 		
 		oldButton2State = currentButton2;
