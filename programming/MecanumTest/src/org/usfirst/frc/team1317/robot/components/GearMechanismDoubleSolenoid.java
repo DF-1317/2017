@@ -72,7 +72,7 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 			if(DoorOpener.get()==DoubleSolenoid.Value.kForward) {
 				tryCloseDoor();
 			}
-			else if (DoorOpener.get() == DoubleSolenoid.Value.kReverse&&GearPusher.get()==DoubleSolenoid.Value.kForward)
+			else if (DoorOpener.get() == DoubleSolenoid.Value.kForward&&GearPusher.get()==DoubleSolenoid.Value.kForward)
 			{
 				reset = true;
 				resetTime.reset();
@@ -93,7 +93,7 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 			{
 				trypushGear();
 			}
-			else if (DoorOpener.get() == DoubleSolenoid.Value.kReverse&&GearPusher.get()==DoubleSolenoid.Value.kForward)
+			else if (DoorOpener.get() == DoubleSolenoid.Value.kForward&&GearPusher.get()==DoubleSolenoid.Value.kForward)
 			{
 				reset = true;
 				resetTime.reset();
@@ -115,12 +115,15 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		{
 			if(GearPusher.get()==DoubleSolenoid.Value.kForward)
 			{
-				GearPusher.set(DoubleSolenoid.Value.kReverse);
+				retractGearPiston();
 			}
 			if(resetTime.get()>=0.5)
 			{
-				DoorOpener.set(DoubleSolenoid.Value.kForward);
-				reset = false;
+				Boolean done = tryCloseDoor();
+				if(done)
+				{
+					reset = false;
+				}
 			}
 		}
 		
@@ -138,7 +141,7 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 	@Override
 	public Boolean tryCloseDoor()
 	{
-		if (GearPusher.get()==DoubleSolenoid.Value.kForward) {
+		if (GearPusher.get()==DoubleSolenoid.Value.kReverse) {
 			DoorOpener.set(DoubleSolenoid.Value.kReverse);
 			DoorOpen = false;
 			return true;
@@ -241,13 +244,13 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 	
 	void putDataToSmartDashboard()
 	{
-		Boolean pistonout;
-		Boolean dooropened;
+		Boolean pistonout =false;
+		Boolean dooropened = false;
 		if(DoorOpener.get()==DoubleSolenoid.Value.kForward)
 		{
 			dooropened = true;
 		}
-		else
+		else if(DoorOpener.get()==DoubleSolenoid.Value.kReverse)
 		{
 			dooropened = false;
 		}
@@ -255,7 +258,7 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		{
 			pistonout = true;
 		}
-		else
+		else if (GearPusher.get()==DoubleSolenoid.Value.kReverse)
 		{
 			pistonout = false;
 		}
