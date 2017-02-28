@@ -37,6 +37,8 @@ public class Robot extends IterativeRobot {
 	
 	PIDDriveDistance driveForward;
 	PIDTurning turner;
+	
+	Timer AutoTimer;
 		
 
 	/**
@@ -69,6 +71,7 @@ public class Robot extends IterativeRobot {
 		turner = new PIDTurning(driveTrain,ahrs);
 		driveForward = new PIDDriveDistance(driveTrain,ahrs);
 		SmartDashboard.putNumber("Number of Solenoids", PortsJNI.getNumSolenoidChannels());
+		AutoTimer = new Timer();
 	}
 
 	/**
@@ -91,6 +94,8 @@ public class Robot extends IterativeRobot {
 		driveTrain.AutoStart();
 		gearMechanism.AutoStart();
 		climber.AutoStart();
+		AutoTimer.reset();
+		AutoTimer.start();
 	}
 
 	/**
@@ -101,7 +106,7 @@ public class Robot extends IterativeRobot {
 		Boolean next = false;
 		switch (autoSelected) {
 		case crossingAuto:
-			if(Timer.getMatchTime()<1)
+			if(AutoTimer.get()<1)
 			{
 				driveTrain.drive(0, -0.6, 0);
 			}
