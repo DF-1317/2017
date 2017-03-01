@@ -4,6 +4,7 @@ import java.net.*;
 import java.util.*;
 
 import com.fasterxml.jackson.jr.ob.JSON;
+import com.fasterxml.jackson.jr.ob.JSONObjectException;
 
 class PacketReader {
 	class Coord {
@@ -23,6 +24,7 @@ class PacketReader {
 	{
 		try {
 			serverSocket = new DatagramSocket(5800);
+			serverSocket.setSoTimeout(1);
 		} catch (SocketException e) {
 			serverSocket = null;
 			e.printStackTrace();
@@ -37,27 +39,28 @@ class PacketReader {
 		}
 		if(serverSocket != null)
 		{
-			DatagramPacket rPacket = new DatagramPacket(rData,rData.length);
-			serverSocket.receive(rPacket);
-			String msg = new String( rPacket.getData() );
-			System.out.println("Got: " + msg);
-			Map<String,Object> c = JSON.std.mapFrom(msg);
-			System.out.println(c);
+			Map<String, Object> c=null;
+			try
+			{
+				DatagramPacket rPacket = new DatagramPacket(rData,rData.length);
+				serverSocket.receive(rPacket);
+				String msg = new String( rPacket.getData() );
+				System.out.println("Got: " + msg);
+				c = JSON.std.mapFrom(msg);
+				System.out.println(c);
+			}
+			catch (SocketTimeoutException e){}
+			catch (JSONObjectException e)
+			{
+				e.printStackTrace();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			
 			return c;
 		}
 		else return null;
 	}
-  public static void main(String args[]) throws Exception {
-    DatagramSocket serverSocket = new DatagramSocket(5000);
-    byte[] rData = new byte[1024];
-    
-    while(true) {
-      DatagramPacket rPacket = new DatagramPacket(rData,rData.length);
-      serverSocket.receive(rPacket);
-      String msg = new String( rPacket.getData() );
-      System.out.println("Got: " + msg);
-      Map<String,Object> c = JSON.std.mapFrom(msg);
-      System.out.println(c);
-    }
   }
-}
