@@ -39,6 +39,8 @@ public class Robot extends IterativeRobot {
 	PIDTurning turner;
 	
 	Timer AutoTimer;
+	
+	PacketReader packetReader;
 		
 
 	/**
@@ -72,6 +74,7 @@ public class Robot extends IterativeRobot {
 		driveForward = new PIDDriveDistance(driveTrain,ahrs);
 		SmartDashboard.putNumber("Number of Solenoids", PortsJNI.getNumSolenoidChannels());
 		AutoTimer = new Timer();
+		packetReader = new PacketReader();
 	}
 
 	/**
@@ -301,7 +304,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void testPeriodic() {
 		
-		if (AutoStep == 0) {
+		/*if (AutoStep == 0) {
 			driveForward.resetDistance();
 			AutoStep++;
 		}
@@ -316,11 +319,12 @@ public class Robot extends IterativeRobot {
 		}
 		if (MoveJoystick.getRawButton(2)){
 			driveForward.resetDistance();
-		}
+		}*/
 		
 		driveTrain.TestUpdate();
 		climber.TestUpdate();
 		gearMechanism.TestUpdate();
+		packetReader.getPacket();
 	}
 	
 }
