@@ -6,6 +6,8 @@ import org.usfirst.frc.team1317.robot.*;
 public class GearMechanismDoubleSolenoid implements GearMechanism {
 	
     Compressor GearCompressor;
+    //For the Door Opener kForward is open and kReverse is closed.
+    //For the Gear pusher, kForward is piston extended and kReverse is piston retracted.
 	DoubleSolenoid DoorOpener;
 	DoubleSolenoid GearPusher;
 	Boolean DoorOpen;
