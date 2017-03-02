@@ -14,6 +14,8 @@ public class GearMechanismSingleSolenoid implements GearMechanism {
 	byte counter;
 	Boolean oldButton2State;
 	Boolean oldTriggerState;
+	Boolean reset;
+	Timer resetTime;
 	
 	public GearMechanismSingleSolenoid(Joystick j)
 	{
@@ -33,6 +35,8 @@ public class GearMechanismSingleSolenoid implements GearMechanism {
 		oldTriggerState = false;
 		SmartDashboard.putBoolean("Door Opened", DoorOpener.get());
 		SmartDashboard.putBoolean("Gear Pusher out", GearPusher.get());
+		reset = false;
+		resetTime = new Timer();
 	}
 	
 	//This method is called at the start of Autonomous
@@ -62,6 +66,12 @@ public class GearMechanismSingleSolenoid implements GearMechanism {
 			if(DoorOpener.get()) {
 				tryCloseDoor();
 			}
+			else if (DoorOpener.get() !=true &&GearPusher.get()==true)
+			{
+				reset = true;
+				resetTime.reset();
+				resetTime.start();
+			}
 			//if the door is closed open the door.
 			else {
 				openDoor();
@@ -89,7 +99,18 @@ public class GearMechanismSingleSolenoid implements GearMechanism {
 		{
 			GearCompressor.stop();
 		}
-		
+		if(reset)
+		{
+			if(GearPusher.get()==true)
+			{
+				GearPusher.set(false);
+			}
+			if(resetTime.get()>=0.5)
+			{
+				DoorOpener.set(false);
+				reset = false;
+			}
+		}
 		oldButton2State = currentButton2;
 		oldTriggerState = currentTrigger;
 	}

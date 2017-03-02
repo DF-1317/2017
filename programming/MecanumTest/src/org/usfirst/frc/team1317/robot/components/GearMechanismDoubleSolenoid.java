@@ -6,6 +6,8 @@ import org.usfirst.frc.team1317.robot.*;
 public class GearMechanismDoubleSolenoid implements GearMechanism {
 	
     Compressor GearCompressor;
+    //For the Door Opener kForward is open and kReverse is closed.
+    //For the Gear pusher, kForward is piston extended and kReverse is piston retracted.
 	DoubleSolenoid DoorOpener;
 	DoubleSolenoid GearPusher;
 	Boolean DoorOpen;
@@ -15,6 +17,8 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 	byte counter;
 	Boolean oldButton2State;
 	Boolean oldTriggerState;
+	Boolean reset;
+	Timer resetTime;
 	
 	public GearMechanismDoubleSolenoid(Joystick j)
 	{
@@ -33,7 +37,8 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		oldButton2State = false;
 		oldTriggerState = false;
 		putDataToSmartDashboard();
-		
+		reset = false;
+		resetTime = new Timer();
 	}
 	
 	//This method is called at the start of Autonomous
@@ -69,6 +74,12 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 			if(DoorOpener.get()==DoubleSolenoid.Value.kForward) {
 				tryCloseDoor();
 			}
+			else if (DoorOpener.get() == DoubleSolenoid.Value.kForward&&GearPusher.get()==DoubleSolenoid.Value.kForward)
+			{
+				reset = true;
+				resetTime.reset();
+				resetTime.start();
+			}
 			//if the door is closed open the door.
 			else {
 				openDoor();
@@ -80,14 +91,20 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		if(currentTrigger && !oldTriggerState)
 		{
 			//if the piston is out, bring the piston in.
-			if (GearPusher.get()==DoubleSolenoid.Value.kForward)
+			if (GearPusher.get()==DoubleSolenoid.Value.kReverse)
 			{
-				retractGearPiston();
+				trypushGear();
+			}
+			else if (DoorOpener.get() == DoubleSolenoid.Value.kForward&&GearPusher.get()==DoubleSolenoid.Value.kForward)
+			{
+				reset = true;
+				resetTime.reset();
+				resetTime.start();
 			}
 			//if the piston is in
 			else
 			{
-				trypushGear();
+				retractGearPiston();
 			}
 			putDataToSmartDashboard();
 		}
@@ -95,6 +112,21 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		if(Timer.getMatchTime()>120)
 		{
 			GearCompressor.stop();
+		}
+		if(reset)
+		{
+			if(GearPusher.get()==DoubleSolenoid.Value.kForward)
+			{
+				retractGearPiston();
+			}
+			if(resetTime.get()>=0.5)
+			{
+				Boolean done = tryCloseDoor();
+				if(done)
+				{
+					reset = false;
+				}
+			}
 		}
 		
 		oldButton2State = currentButton2;
@@ -111,7 +143,7 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 	@Override
 	public Boolean tryCloseDoor()
 	{
-		if (GearPusher.get()==DoubleSolenoid.Value.kForward) {
+		if (GearPusher.get()==DoubleSolenoid.Value.kReverse) {
 			DoorOpener.set(DoubleSolenoid.Value.kReverse);
 			DoorOpen = false;
 			return true;
@@ -214,13 +246,13 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 	
 	void putDataToSmartDashboard()
 	{
-		Boolean pistonout;
-		Boolean dooropened;
+		Boolean pistonout =false;
+		Boolean dooropened = false;
 		if(DoorOpener.get()==DoubleSolenoid.Value.kForward)
 		{
 			dooropened = true;
 		}
-		else
+		else if(DoorOpener.get()==DoubleSolenoid.Value.kReverse)
 		{
 			dooropened = false;
 		}
@@ -228,7 +260,7 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		{
 			pistonout = true;
 		}
-		else
+		else if (GearPusher.get()==DoubleSolenoid.Value.kReverse)
 		{
 			pistonout = false;
 		}
