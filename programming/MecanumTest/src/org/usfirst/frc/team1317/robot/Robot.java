@@ -6,7 +6,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.*;
 import org.usfirst.frc.team1317.robot.components.*;
-import com.kauailabs.navx.frc.*; 
+import com.kauailabs.navx.frc.*;
+import java.util.Map;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -23,25 +24,25 @@ public class Robot extends IterativeRobot {
 	String autoSelected;
 	SendableChooser<String> chooser = new SendableChooser<>();
 	int AutoStep;
-	
-	//variables to hold the joystick objects.
+
+	// variables to hold the joystick objects.
 	Joystick TurnJoystick;
 	Joystick MoveJoystick;
 	Joystick OtherJoystick;
-	
+
 	MecanumDriveTrain driveTrain;
 	GearMechanism gearMechanism;
 	Climber climber;
-	
+
 	AHRS ahrs;
-	
+
 	PIDDriveDistance driveForward;
 	PIDTurning turner;
-	
+
 	Timer AutoTimer;
-	
+
 	PacketReader packetReader;
-		
+	Targeting targeter;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -49,32 +50,33 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		//some default code for autonomous selection
+		// some default code for autonomous selection
 		chooser.addDefault("Center", defaultAuto);
 		chooser.addObject("Left", leftAuto);
 		chooser.addObject("Right", rightAuto);
 		chooser.addObject("Cross the Baseline", crossingAuto);
 		SmartDashboard.putData("Auto choices", chooser);
-		
-		//initializes the NavX-MXP	
+
+		// initializes the NavX-MXP
 		ahrs = new AHRS(SerialPort.Port.kMXP);
-		//initializes the joystick objects
+		// initializes the joystick objects
 		TurnJoystick = new Joystick(RobotPorts.TurnJoystickPort);
 		MoveJoystick = new Joystick(RobotPorts.MoveJoystickPort);
 		OtherJoystick = new Joystick(RobotPorts.OtherJoystickPort);
-		//initializes drivetrain, telling it what joystick to use
-		driveTrain = new MecanumDriveTrain(MoveJoystick, TurnJoystick, ahrs);//remember to add ahrs
-		//initializes climber with what joystick to control
+		// initializes drivetrain, telling it what joystick to use
+		driveTrain = new MecanumDriveTrain(MoveJoystick, TurnJoystick, ahrs);
+		// initializes climber with what joystick to control
 		climber = new Climber(OtherJoystick);
-		//initializes the gear Mechanism, with what joystick to use.
-		//change this based on which robot we are deploying code to.
+		// initializes the gear Mechanism, with what joystick to use.
+		// change this based on which robot we are deploying code to.
 		gearMechanism = new GearMechanismDoubleSolenoid(OtherJoystick);
 		AutoStep = 0;
-		turner = new PIDTurning(driveTrain,ahrs);
-		driveForward = new PIDDriveDistance(driveTrain,ahrs);
+		turner = new PIDTurning(driveTrain, ahrs);
+		driveForward = new PIDDriveDistance(driveTrain, ahrs);
 		SmartDashboard.putNumber("Number of Solenoids", PortsJNI.getNumSolenoidChannels());
 		AutoTimer = new Timer();
 		packetReader = new PacketReader();
+		targeter = new Targeting(driveTrain);
 	}
 
 	/**
@@ -89,7 +91,8 @@ public class Robot extends IterativeRobot {
 	 * SendableChooser make sure to add them to the chooser code above as well.
 	 */
 	@Override
-	public void autonomousInit() { //all of the code in this function was automatically added
+	public void autonomousInit() { // all of the code in this function was
+									// automatically added
 		autoSelected = chooser.getSelected();
 		// autoSelected = SmartDashboard.getString("Auto Selector",
 		// defaultAuto);
@@ -105,116 +108,95 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during autonomous
 	 */
 	@Override
-	public void autonomousPeriodic() { 
+	public void autonomousPeriodic() {
 		Boolean next = false;
 		switch (autoSelected) {
 		case crossingAuto:
-			if(AutoTimer.get()<1)
-			{
+			if (AutoTimer.get() < 1) {
 				driveTrain.drive(0, -0.6, 0);
 			}
 			break;
 		case leftAuto:
-			if(AutoStep == 0)
-			{
+			if (AutoStep == 0) {
 				driveTrain.resetDistance();
 				next = true;
 			}
-			if(AutoStep == 1)
-			{
-				next = driveTrain.DriveForward(101,0.6,0);
+			if (AutoStep == 1) {
+				next = driveTrain.DriveForward(101, 0.6, 0);
 			}
-			if(AutoStep == 2)
-			{
+			if (AutoStep == 2) {
 				next = driveTrain.turntoAngle(-60, 0.6);
 			}
-			if(AutoStep ==3)
-			{
+			if (AutoStep == 3) {
 				driveTrain.resetDistance();
 				next = true;
 			}
-			if(AutoStep == 4)
-			{
+			if (AutoStep == 4) {
 				next = driveTrain.DriveForward(2, 0.6, -60);
 			}
-			if(AutoStep == 5)
-			{
+			if (AutoStep == 5) {
 				next = driveTrain.alignWithPeg();
 			}
-			if(AutoStep == 6)
-			{
-				gearMechanism.openDoor(); 
+			if (AutoStep == 6) {
+				gearMechanism.openDoor();
 				next = true;
 			}
-			if(AutoStep == 7)
-											//we need to fill these out
+			if (AutoStep == 7)
+			// we need to fill these out
 			{
 				next = driveTrain.DriveForward(0, 0, 0);
 			}
-			if(AutoStep == 8)
-			{
+			if (AutoStep == 8) {
 				next = gearMechanism.trypushGear();
 			}
-			if(AutoStep == 9)
-			{
+			if (AutoStep == 9) {
 				gearMechanism.retractGearPiston();
 				next = true;
 			}
-			if(AutoStep == 10)
-			{
+			if (AutoStep == 10) {
 				next = gearMechanism.tryCloseDoor();
 			}
 			if (next)
 				AutoStep++;
 			break;
 		case rightAuto:
-			if(AutoStep == 0)
-			{
+			if (AutoStep == 0) {
 				driveTrain.resetDistance();
 				next = true;
 			}
-			if(AutoStep == 1)
-			{
-				next = driveTrain.DriveForward(101,0.6,0);
+			if (AutoStep == 1) {
+				next = driveTrain.DriveForward(101, 0.6, 0);
 			}
-			if(AutoStep == 2)
-			{
+			if (AutoStep == 2) {
 				next = driveTrain.turntoAngle(60, 0.6);
 			}
-			if(AutoStep ==3)
-			{
+			if (AutoStep == 3) {
 				driveTrain.resetDistance();
 				next = true;
 			}
-			if(AutoStep == 4)
-			{
+			if (AutoStep == 4) {
 				next = driveTrain.DriveForward(2, 0.6, 60);
 			}
-			if(AutoStep == 5)
-			{
+			if (AutoStep == 5) {
 				next = driveTrain.alignWithPeg();
 			}
-			if(AutoStep == 6)
-			{
-				gearMechanism.openDoor(); 
+			if (AutoStep == 6) {
+				gearMechanism.openDoor();
 				next = true;
 			}
-			if(AutoStep == 7)
-											//we need to fill these out
+			if (AutoStep == 7)
+			// we need to fill these out
 			{
 				next = driveTrain.DriveForward(0, 0, 0);
 			}
-			if(AutoStep == 8)
-			{
+			if (AutoStep == 8) {
 				next = gearMechanism.trypushGear();
 			}
-			if(AutoStep == 9)
-			{
+			if (AutoStep == 9) {
 				gearMechanism.retractGearPiston();
 				next = true;
 			}
-			if(AutoStep == 10)
-			{
+			if (AutoStep == 10) {
 				next = gearMechanism.tryCloseDoor();
 			}
 			if (next)
@@ -222,46 +204,39 @@ public class Robot extends IterativeRobot {
 			break;
 		case defaultAuto:
 		default:
-			if(AutoStep ==0)
-			{
+			if (AutoStep == 0) {
 				driveTrain.resetDistance();
 				next = true;
 			}
-			if(AutoStep == 1)
-			{
-				next = driveTrain.DriveForward(68.3,0.6,0);
+			if (AutoStep == 1) {
+				next = driveTrain.DriveForward(68.3, 0.6, 0);
 			}
-			if(AutoStep == 2)
-			{
+			if (AutoStep == 2) {
 				next = driveTrain.alignWithPeg();
 			}
-			if(AutoStep == 3)
-			{
+			if (AutoStep == 3) {
 				gearMechanism.openDoor();
 				next = true;
 			}
-			if(AutoStep == 4)
-											//we need to fill these out
+			if (AutoStep == 4)
+			// we need to fill these out
 			{
 				next = driveTrain.DriveForward(0, 0, 0);
 			}
-			if(AutoStep == 5)
-			{
+			if (AutoStep == 5) {
 				next = gearMechanism.trypushGear();
 			}
-			if(AutoStep == 6)
-			{
+			if (AutoStep == 6) {
 				gearMechanism.retractGearPiston();
 				next = true;
 			}
-			if(AutoStep == 7)
-			{
+			if (AutoStep == 7) {
 				next = gearMechanism.tryCloseDoor();
 			}
 			if (next)
 				AutoStep++;
 			break;
-		
+
 		}
 		driveTrain.AutoUpdate();
 		gearMechanism.AutoUpdate();
@@ -273,29 +248,35 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		//update the drivetrain values with joystick
-		//On the far right Joystick, button 3 switches to mode 0, button 4 switches to mode 1, and button 5 switches to mode 2.
-		//On the far right Joystick, button 2 toggles between throttle mode and full speed mode
-		//On the far right Joystick, the throttle controls the speed.
-		//On the far right Joystick, button 11 toggles throttle lock.
-		//In Mode 0, joystick 2 controls movement direction and joystick 1 controls turning
-		//In Mode 1, joystick 2 controls movement direction and twisting the joystick controls turning
-		//In Mode 2, joystick 1 controls the left wheels of the robot and joystick 2 controls the right wheels
-		driveTrain.TeleopUpdate(); //uses the joysticks to control the drivetrain
-		
-		
-		//all of the controls for the pneumatics are on the far left joystick.
-		//The trigger turns toggles the gear pusher.
-		//Button 2 toggles the door
-		//Button 9 turns on manual override for five seconds on the mechanism's safety feature.
-		gearMechanism.TeleopUpdate();//uses the joysticks to control the gear mechanism. 
-		
-		
-		//Moving joystick 0 forward and back controls the climber motor.
-		climber.TeleopUpdate(); //uses the joysticks to control the climber.
-		//SmartDashboard.putNumber("Acceleration X NavX", ahrs.getWorldLinearAccelX());
-		//SmartDashboard.putNumber("Acceleration Y NavX",ahrs.getWorldLinearAccelY());
-		
+		// update the drivetrain values with joystick
+		// On the far right Joystick, button 3 switches to mode 0, button 4
+		// switches to mode 1, and button 5 switches to mode 2.
+		// On the far right Joystick, button 2 toggles between throttle mode and
+		// full speed mode
+		// On the far right Joystick, the throttle controls the speed.
+		// On the far right Joystick, button 11 toggles throttle lock.
+		// In Mode 0, joystick 2 controls movement direction and joystick 1
+		// controls turning
+		// In Mode 1, joystick 2 controls movement direction and twisting the
+		// joystick controls turning
+		// In Mode 2, joystick 1 controls the left wheels of the robot and
+		// joystick 2 controls the right wheels
+		driveTrain.TeleopUpdate(); // uses the joysticks to control the
+									// drivetrain
+
+		// all of the controls for the pneumatics are on the far left joystick.
+		// The trigger turns toggles the gear pusher.
+		// Button 2 toggles the door
+		// Button 9 turns on manual override for five seconds on the mechanism's
+		// safety feature.
+		gearMechanism.TeleopUpdate();// uses the joysticks to control the gear
+										// mechanism.
+
+		// Moving joystick 0 forward and back controls the climber motor.
+		climber.TeleopUpdate(); // uses the joysticks to control the climber.
+		SmartDashboard.putNumber("Acceleration X NavX",ahrs.getWorldLinearAccelX());
+		SmartDashboard.putNumber("Acceleration Y NavX",ahrs.getWorldLinearAccelY());
+
 	}
 
 	/**
@@ -303,29 +284,26 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		
-		/*if (AutoStep == 0) {
-			driveForward.resetDistance();
-			AutoStep++;
-		}
-		if (MoveJoystick.getTrigger()) {
-			driveForward.driveForward(12, 0.5, 0);
-		}
-		if (TurnJoystick.getTrigger()) {
-			turner.TurnToDegrees(60, 0.5);
-		}
-		if (TurnJoystick.getRawButton(2)){
-			ahrs.zeroYaw();
-		}
-		if (MoveJoystick.getRawButton(2)){
-			driveForward.resetDistance();
-		}*/
-		
+
+		/*
+		 * if (AutoStep == 0) { driveForward.resetDistance(); AutoStep++; } if
+		 * (MoveJoystick.getTrigger()) { driveForward.driveForward(12, 0.5, 0);
+		 * } if (TurnJoystick.getTrigger()) { turner.TurnToDegrees(60, 0.5); }
+		 * if (TurnJoystick.getRawButton(2)){ ahrs.zeroYaw(); } if
+		 * (MoveJoystick.getRawButton(2)){ driveForward.resetDistance(); }
+		 */
+
 		driveTrain.TestUpdate();
 		climber.TestUpdate();
 		gearMechanism.TestUpdate();
 		packetReader.getPacket();
 	}
 	
-}
+	public boolean alignWithPeg()
+	{
+		Map<String,Object> boundingBox = packetReader.getPacket();
+		targeter.setCurrentBoundingBox(boundingBox);
+		return targeter.adjustCourse();
+	}
 
+}
