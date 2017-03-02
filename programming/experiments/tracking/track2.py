@@ -18,12 +18,12 @@ import imutils
 import socket
 
 DetectFrameRate       = 100  # How often to re-run the detection
-SingleObjectThreshold = 0.25 # The size different whereby we think we only see one of our regions
+SingleObjectThreshold = 0.25 # The size different needed to declare one region
 ShowBbox              = True # Should we show the bbox image to the user?
 # Network Stuff
-IPADDR  = 'localhost'
-PORTNUM = 5000
-netSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
+IPADDR                = '10.13.17.102' # address of the RIO
+PORTNUM               = 5800
+netSock               = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
 
 ''' Detect our target
 
@@ -37,7 +37,7 @@ def detect(mask):
   ret, thresh = cv2.threshold(mask, 127,255,0)
   _, contours, _ = cv2.findContours( thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
   # print len(contours)
-  if (2 > len(contours)) return None
+  if (2 > len(contours)): return None
   
   areas = [cv2.contourArea(c) for c in contours]
   maxIdxs = np.argsort(areas)[-2:][::-1]
@@ -73,7 +73,9 @@ def detect(mask):
    with the calibration program.
 '''
 def track():
-  cap = cv2.VideoCapture(1)
+  # cap = cv2.VideoCapture(0) # built in camera
+  # cap = cv2.VideoCapture(1) # USB camera
+  cap = cv2.VideoCapture('http://10.13.17.12/mjpg/video.mjpg') # IP camera
   loops = DetectFrameRate
   lower = np.array([0,10,230],np.uint8)
   upper = np.array([179,255,255],np.uint8)
@@ -125,8 +127,8 @@ def track():
     netSock.sendto(json.dumps(pdata),(IPADDR,PORTNUM))
     
     if (ShowBbox):
-      p1 = (x,y)
-      p2 = ((x + w), (y + h))
+      p1 = (int(x),int(y))
+      p2 = (int(x + w), int(y + h))
       cv2.rectangle(img, p1, p2, (0,255,0), 3)
       cv2.imshow('img',img)
   
