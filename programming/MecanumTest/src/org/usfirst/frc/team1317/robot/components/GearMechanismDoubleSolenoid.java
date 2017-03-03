@@ -19,6 +19,7 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 	Boolean oldTriggerState;
 	Boolean reset;
 	Timer resetTime;
+	DigitalInput DoorLimitSwitch;
 	
 	public GearMechanismDoubleSolenoid(Joystick j)
 	{
@@ -39,6 +40,7 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		putDataToSmartDashboard();
 		reset = false;
 		resetTime = new Timer();
+		DoorLimitSwitch = new DigitalInput(9);
 	}
 	
 	//This method is called at the start of Autonomous
@@ -58,6 +60,7 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 	//This method is called every 20 milliseconds during Teleop
 	@Override
 	public void TeleopUpdate() {
+		SmartDashboard.putBoolean("Limit Switch", DoorLimitSwitch.get());
 		Boolean currentButton2 = control.getRawButton(2);
 		Boolean currentTrigger = control.getTrigger();
 		Boolean currentButton3 = control.getRawButton(3);
