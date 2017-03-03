@@ -122,38 +122,23 @@ public class Robot extends IterativeRobot {
 				next = true;
 			}
 			if (AutoStep == 1) {
-				next = driveTrain.DriveForward(101, 0.6, 0);
+				next = alignWithPeg();
 			}
 			if (AutoStep == 2) {
 				next = driveTrain.turntoAngle(-60, 0.6);
-			}
+			}	
 			if (AutoStep == 3) {
-				driveTrain.resetDistance();
-				next = true;
-			}
-			if (AutoStep == 4) {
-				next = driveTrain.DriveForward(2, 0.6, -60);
-			}
-			if (AutoStep == 5) {
-				next = driveTrain.alignWithPeg();
-			}
-			if (AutoStep == 6) {
 				gearMechanism.openDoor();
 				next = true;
 			}
-			if (AutoStep == 7)
-			// we need to fill these out
-			{
-				next = driveTrain.DriveForward(0, 0, 0);
-			}
-			if (AutoStep == 8) {
+			if (AutoStep == 4) {
 				next = gearMechanism.trypushGear();
 			}
-			if (AutoStep == 9) {
+			if (AutoStep == 5) {
 				gearMechanism.retractGearPiston();
 				next = true;
 			}
-			if (AutoStep == 10) {
+			if (AutoStep == 6) {
 				next = gearMechanism.tryCloseDoor();
 			}
 			if (next)
@@ -165,38 +150,23 @@ public class Robot extends IterativeRobot {
 				next = true;
 			}
 			if (AutoStep == 1) {
-				next = driveTrain.DriveForward(101, 0.6, 0);
+				next = alignWithPeg();
 			}
 			if (AutoStep == 2) {
-				next = driveTrain.turntoAngle(60, 0.6);
-			}
+				next = driveTrain.turntoAngle(-60, 0.6);
+			}	
 			if (AutoStep == 3) {
-				driveTrain.resetDistance();
-				next = true;
-			}
-			if (AutoStep == 4) {
-				next = driveTrain.DriveForward(2, 0.6, 60);
-			}
-			if (AutoStep == 5) {
-				next = driveTrain.alignWithPeg();
-			}
-			if (AutoStep == 6) {
 				gearMechanism.openDoor();
 				next = true;
 			}
-			if (AutoStep == 7)
-			// we need to fill these out
-			{
-				next = driveTrain.DriveForward(0, 0, 0);
-			}
-			if (AutoStep == 8) {
+			if (AutoStep == 4) {
 				next = gearMechanism.trypushGear();
 			}
-			if (AutoStep == 9) {
+			if (AutoStep == 5) {
 				gearMechanism.retractGearPiston();
 				next = true;
 			}
-			if (AutoStep == 10) {
+			if (AutoStep == 6) {
 				next = gearMechanism.tryCloseDoor();
 			}
 			if (next)
@@ -209,28 +179,23 @@ public class Robot extends IterativeRobot {
 				next = true;
 			}
 			if (AutoStep == 1) {
-				next = driveTrain.DriveForward(68.3, 0.6, 0);
+				next = alignWithPeg();
 			}
 			if (AutoStep == 2) {
-				next = driveTrain.alignWithPeg();
-			}
+				next = driveTrain.turntoAngle(-60, 0.6);
+			}	
 			if (AutoStep == 3) {
 				gearMechanism.openDoor();
 				next = true;
 			}
-			if (AutoStep == 4)
-			// we need to fill these out
-			{
-				next = driveTrain.DriveForward(0, 0, 0);
-			}
-			if (AutoStep == 5) {
+			if (AutoStep == 4) {
 				next = gearMechanism.trypushGear();
 			}
-			if (AutoStep == 6) {
+			if (AutoStep == 5) {
 				gearMechanism.retractGearPiston();
 				next = true;
 			}
-			if (AutoStep == 7) {
+			if (AutoStep == 6) {
 				next = gearMechanism.tryCloseDoor();
 			}
 			if (next)
