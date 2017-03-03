@@ -11,9 +11,9 @@ public class Targeting {
 	final int WidthAtTarget = 500;
 	final int WidthAtFarthestPoint = 100;
 	final int FarthestPointInches = 120;
-	final double ForwardSpeed = 0.75;
-	final double ForwardSpeed2 = 0.5;
-	final double ForwardSpeed3 =0.3;
+	final double ForwardSpeed = -0.75;
+	final double ForwardSpeed2 = -0.5;
+	final double ForwardSpeed3 = -0.3;
 	final double SlidingSpeed = 1.0;
 	final double TurningSpeed = 0.5;
 	
