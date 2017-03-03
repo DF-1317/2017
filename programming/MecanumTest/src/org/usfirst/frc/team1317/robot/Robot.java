@@ -1,6 +1,5 @@
 package org.usfirst.frc.team1317.robot;
 
-import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.hal.PortsJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,6 +22,14 @@ public class Robot extends IterativeRobot {
 	final String rightAuto = "Right";
 	String autoSelected;
 	SendableChooser<String> chooser = new SendableChooser<>();
+	
+	final String LeftLoadingStation = "Left";
+	final String RightLoadingStation = "Right";
+	final String AutoLoadingStation = "Auto";
+	String loadingStationSelected;
+	String LoadingStation;
+	SendableChooser<String> LoadingStationChooser = new SendableChooser<>();
+	
 	int AutoStep;
 
 	// variables to hold the joystick objects.
@@ -43,6 +50,8 @@ public class Robot extends IterativeRobot {
 
 	PacketReader packetReader;
 	Targeting targeter;
+	
+	DriverStation driverStation;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -56,6 +65,11 @@ public class Robot extends IterativeRobot {
 		chooser.addObject("Right", rightAuto);
 		chooser.addObject("Cross the Baseline", crossingAuto);
 		SmartDashboard.putData("Auto choices", chooser);
+		
+		LoadingStationChooser.addDefault("Auto", AutoLoadingStation);
+		LoadingStationChooser.addObject("Left", LeftLoadingStation);
+		LoadingStationChooser.addObject("Right", RightLoadingStation);
+		SmartDashboard.putData("Loading Station",LoadingStationChooser);
 
 		// initializes the NavX-MXP
 		ahrs = new AHRS(SerialPort.Port.kMXP);
@@ -77,6 +91,7 @@ public class Robot extends IterativeRobot {
 		AutoTimer = new Timer();
 		packetReader = new PacketReader();
 		targeter = new Targeting(driveTrain);
+		driverStation = DriverStation.getInstance();
 	}
 
 	/**
@@ -94,6 +109,22 @@ public class Robot extends IterativeRobot {
 	public void autonomousInit() { // all of the code in this function was
 									// automatically added
 		autoSelected = chooser.getSelected();
+		loadingStationSelected = LoadingStationChooser.getSelected();
+		if(loadingStationSelected == AutoLoadingStation)
+		{
+			if(driverStation.getAlliance()==DriverStation.Alliance.Blue)
+			{
+				LoadingStation = "Right";
+			}
+			else
+			{
+				LoadingStation = "Left";
+			}
+		}
+		else
+		{
+			LoadingStation = loadingStationSelected;
+		}
 		// autoSelected = SmartDashboard.getString("Auto Selector",
 		// defaultAuto);
 		System.out.println("Auto selected: " + autoSelected);
@@ -123,23 +154,32 @@ public class Robot extends IterativeRobot {
 			}
 			if (AutoStep == 1) {
 				next = alignWithPeg();
-			}
-			if (AutoStep == 2) {
-				next = driveTrain.turntoAngle(-60, 0.6);
 			}	
-			if (AutoStep == 3) {
+			if (AutoStep == 2) {
 				gearMechanism.openDoor();
 				next = true;
 			}
-			if (AutoStep == 4) {
+			if (AutoStep == 3) {
 				next = gearMechanism.trypushGear();
 			}
-			if (AutoStep == 5) {
+			if (AutoStep == 4) {
 				gearMechanism.retractGearPiston();
 				next = true;
 			}
-			if (AutoStep == 6) {
+			if (AutoStep == 5) {
 				next = gearMechanism.tryCloseDoor();
+			}
+			if (AutoStep == 6) {
+				AutoTimer.reset();
+				AutoTimer.start();
+			}
+			if (AutoStep == 7)
+			{
+				driveTrain.drive(0, 0.5, 0);
+				if (AutoTimer.get()>0.1)
+				{
+					next = true;
+				}
 			}
 			if (next)
 				AutoStep++;
@@ -151,23 +191,32 @@ public class Robot extends IterativeRobot {
 			}
 			if (AutoStep == 1) {
 				next = alignWithPeg();
-			}
-			if (AutoStep == 2) {
-				next = driveTrain.turntoAngle(-60, 0.6);
 			}	
-			if (AutoStep == 3) {
+			if (AutoStep == 2) {
 				gearMechanism.openDoor();
 				next = true;
 			}
-			if (AutoStep == 4) {
+			if (AutoStep == 3) {
 				next = gearMechanism.trypushGear();
 			}
-			if (AutoStep == 5) {
+			if (AutoStep == 4) {
 				gearMechanism.retractGearPiston();
 				next = true;
 			}
-			if (AutoStep == 6) {
+			if (AutoStep == 5) {
 				next = gearMechanism.tryCloseDoor();
+			}
+			if (AutoStep == 6) {
+				AutoTimer.reset();
+				AutoTimer.start();
+			}
+			if (AutoStep == 7)
+			{
+				driveTrain.drive(0, 0.5, 0);
+				if (AutoTimer.get()>0.1)
+				{
+					next = true;
+				}
 			}
 			if (next)
 				AutoStep++;
@@ -180,23 +229,32 @@ public class Robot extends IterativeRobot {
 			}
 			if (AutoStep == 1) {
 				next = alignWithPeg();
-			}
-			if (AutoStep == 2) {
-				next = driveTrain.turntoAngle(-60, 0.6);
 			}	
-			if (AutoStep == 3) {
+			if (AutoStep == 2) {
 				gearMechanism.openDoor();
 				next = true;
 			}
-			if (AutoStep == 4) {
+			if (AutoStep == 3) {
 				next = gearMechanism.trypushGear();
 			}
-			if (AutoStep == 5) {
+			if (AutoStep == 4) {
 				gearMechanism.retractGearPiston();
 				next = true;
 			}
-			if (AutoStep == 6) {
+			if (AutoStep == 5) {
 				next = gearMechanism.tryCloseDoor();
+			}
+			if (AutoStep == 6) {
+				AutoTimer.reset();
+				AutoTimer.start();
+			}
+			if (AutoStep == 7)
+			{
+				driveTrain.drive(0, 0.5, 0);
+				if (AutoTimer.get()>0.1)
+				{
+					next = true;
+				}
 			}
 			if (next)
 				AutoStep++;
