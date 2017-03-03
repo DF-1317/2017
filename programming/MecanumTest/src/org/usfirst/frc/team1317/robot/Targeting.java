@@ -12,6 +12,8 @@ public class Targeting {
 	final int WidthAtFarthestPoint = 100;
 	final int FarthestPointInches = 120;
 	final double ForwardSpeed = 0.75;
+	final double ForwardSpeed2 = 0.5;
+	final double ForwardSpeed3 =0.3;
 	final double SlidingSpeed = 1.0;
 	final double TurningSpeed = 0.5;
 	
@@ -26,7 +28,10 @@ public class Targeting {
 	
 	public void setCurrentBoundingBox(Map<String,Object> boundingBox)
 	{
-		currentBoundingBox = boundingBox;
+		if(boundingBox != null)
+		{
+			currentBoundingBox = boundingBox;
+		}
 	}
 	
 	public Boolean adjustCourse()
@@ -36,10 +41,22 @@ public class Targeting {
 		double forward=0;
 		Boolean DoneAligningX=false;
 		Boolean DoneMovingForward=false;
-		int xNow = (int)currentBoundingBox.get("x") + (int)currentBoundingBox.get("w");
-		if (Math.abs(estimateDistancetoTarget())>DistanceError&&estimateDistancetoTarget()>0)
+		int xNow = (int)currentBoundingBox.get("x") + (int)currentBoundingBox.get("w")/2;
+		double distance = estimateDistancetoTarget();
+		if (Math.abs(distance)>DistanceError&&distance>0)
 		{
-			forward=ForwardSpeed;
+			if(distance<6)
+			{
+				forward = ForwardSpeed3;
+			}
+			if(distance<14)
+			{
+				forward = ForwardSpeed2;
+			}
+			else
+			{
+				forward=ForwardSpeed;
+			}
 		}
 		else
 		{
