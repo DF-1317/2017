@@ -17,8 +17,8 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 	byte counter;
 	Boolean oldButton2State;
 	Boolean oldTriggerState;
-	Boolean reset;
-	Timer resetTime;
+	Boolean retractAndClose;
+	Timer retractAndCloseTime;
 	DigitalInput DoorLimitSwitch;
 	
 	public GearMechanismDoubleSolenoid(Joystick j)
@@ -38,8 +38,8 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		oldButton2State = false;
 		oldTriggerState = false;
 		putDataToSmartDashboard();
-		reset = false;
-		resetTime = new Timer();
+		retractAndClose = false;
+		retractAndCloseTime = new Timer();
 		DoorLimitSwitch = new DigitalInput(9);
 	}
 	
@@ -66,22 +66,19 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		Boolean currentButton3 = control.getRawButton(3);
 		Boolean currentButton4 = control.getRawButton(4);
 		
-		if(currentButton3) GearPusher.set(DoubleSolenoid.Value.kForward);
-		if(currentButton4) GearPusher.set(DoubleSolenoid.Value.kReverse);
-		
 		ManualOverrideControl();
 		//when button 2 is pressed
 		if(currentButton2 && !oldButton2State)
 		{
-			//if the door is opne close the door, unless the piston is out
-			if(DoorOpener.get()==DoubleSolenoid.Value.kForward) {
-				tryCloseDoor();
-			}
-			else if (DoorOpener.get() == DoubleSolenoid.Value.kForward&&GearPusher.get()==DoubleSolenoid.Value.kForward)
+			if (DoorOpener.get() == DoubleSolenoid.Value.kForward&&GearPusher.get()==DoubleSolenoid.Value.kForward)
 			{
-				reset = true;
-				resetTime.reset();
-				resetTime.start();
+				retractAndClose = true;
+				retractAndCloseTime.reset();
+				retractAndCloseTime.start();
+			}
+			//if the door is opne close the door, unless the piston is out
+			else if(DoorOpener.get()==DoubleSolenoid.Value.kForward) {
+				tryCloseDoor();
 			}
 			//if the door is closed open the door.
 			else {
@@ -96,13 +93,16 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 			//if the piston is out, bring the piston in.
 			if (GearPusher.get()==DoubleSolenoid.Value.kReverse)
 			{
-				trypushGear();
+				if(retractAndClose==false)
+				{
+					trypushGear();
+				}
 			}
 			else if (DoorOpener.get() == DoubleSolenoid.Value.kForward&&GearPusher.get()==DoubleSolenoid.Value.kForward)
 			{
-				reset = true;
-				resetTime.reset();
-				resetTime.start();
+				retractAndClose = true;
+				retractAndCloseTime.reset();
+				retractAndCloseTime.start();
 			}
 			//if the piston is in
 			else
@@ -116,18 +116,18 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		{
 			GearCompressor.stop();
 		}
-		if(reset)
+		if(retractAndClose)
 		{
 			if(GearPusher.get()==DoubleSolenoid.Value.kForward)
 			{
 				retractGearPiston();
 			}
-			if(resetTime.get()>=0.5)
+			if(retractAndCloseTime.get()>=0.5)
 			{
 				Boolean done = tryCloseDoor();
 				if(done)
 				{
-					reset = false;
+					retractAndClose = false;
 				}
 			}
 		}
@@ -192,7 +192,7 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 			if(ManualOverride)
 			{
 				GearPusher.set(DoubleSolenoid.Value.kForward);
-				PistonOut = false;
+				PistonOut = true;
 				System.out.println("Manually Overridden");
 				return true;
 			}
@@ -230,6 +230,7 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		if(ManualOverride)
 		{
 			counter++;
+			putDataToSmartDashboard();
 		}
 		
 		//when the counter is greater than 250 (about 5 seconds)
@@ -237,6 +238,7 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		{
 			//turn manual override off.
 			counter = 0;
+			putDataToSmartDashboard();
 		}
 		//turn on manual override with button 9
 		if(control.getRawButton(9))
@@ -269,6 +271,7 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 		}
 		SmartDashboard.putBoolean("Door Opened", dooropened);
 		SmartDashboard.putBoolean("Gear Pusher out", pistonout);
+		SmartDashboard.putBoolean("Gear Mechanism Manual Override", ManualOverride);
 	}
 
 }
