@@ -20,6 +20,10 @@ public class PIDTurning implements PIDOutput {
 	static final double kToleranceDegrees = 1.0;
 	
 	double TurnRate;
+	double OriginalDegrees;
+	double endingDegrees;
+	
+	boolean firstTime =true;
 	
 	public PIDTurning(MecanumDriveTrain drive, AHRS gyro)
 	{
@@ -38,7 +42,30 @@ public class PIDTurning implements PIDOutput {
 	{
 		turnController.setSetpoint(degrees);
 		turnController.enable();
-		if (Math.abs(gyroSensor.getYaw()-degrees)<=kToleranceDegrees)
+		if (turnController.onTarget())
+		{
+			turnController.disable();
+			return true;
+		}
+		else
+		{
+			DriveTrain.drive(0, 0, speed*TurnRate);
+			return false;
+		}
+	}
+	
+	public Boolean TurnDegrees(double degrees, double speed)
+	{
+		if(firstTime == true)
+		{
+			OriginalDegrees = gyroSensor.getYaw();
+			endingDegrees = OriginalDegrees + degrees;
+			firstTime =false;
+			
+		}
+		turnController.setSetpoint(endingDegrees);
+		turnController.enable();
+		if (turnController.onTarget())
 		{
 			turnController.disable();
 			return true;
@@ -53,6 +80,11 @@ public class PIDTurning implements PIDOutput {
 	@Override
 	public void pidWrite(double output) {
 		TurnRate = output;
+	}
+	
+	public void reset()
+	{
+		firstTime = true;
 	}
 
 }
