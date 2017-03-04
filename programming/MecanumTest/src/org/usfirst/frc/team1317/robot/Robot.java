@@ -67,8 +67,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Auto choices", chooser);
 		
 		LoadingStationChooser.addDefault("Auto", AutoLoadingStation);
-		LoadingStationChooser.addObject("Left", LeftLoadingStation);
-		LoadingStationChooser.addObject("Right", RightLoadingStation);
+		LoadingStationChooser.addObject("Left Loading Station", LeftLoadingStation);
+		LoadingStationChooser.addObject("Right Loading Station", RightLoadingStation);
 		SmartDashboard.putData("Loading Station",LoadingStationChooser);
 
 		// initializes the NavX-MXP
@@ -84,7 +84,7 @@ public class Robot extends IterativeRobot {
 		// initializes the gear Mechanism, with what joystick to use.
 		// change this based on which robot we are deploying code to.
 		gearMechanism = new GearMechanismDoubleSolenoid(OtherJoystick);
-		AutoStep = 0;
+		AutoStep = 7;
 		turner = new PIDTurning(driveTrain, ahrs);
 		driveForward = new PIDDriveDistance(driveTrain, ahrs);
 		SmartDashboard.putNumber("Number of Solenoids", PortsJNI.getNumSolenoidChannels());
@@ -134,6 +134,7 @@ public class Robot extends IterativeRobot {
 		AutoTimer.reset();
 		AutoTimer.start();
 		turner.reset();
+		AutoStep = 7;
 	}
 
 	/**
@@ -144,7 +145,7 @@ public class Robot extends IterativeRobot {
 		Boolean next = false;
 		if(autoSelected == crossingAuto)
 		{
-			if (AutoTimer.get() < 1) {
+			if (AutoTimer.get() < 1.7) {
 				driveTrain.drive(0, -0.6, 0);
 			}
 		}
@@ -204,7 +205,7 @@ public class Robot extends IterativeRobot {
 					}
 					else
 					{
-						driveTrain.drive(0, 0.5, 0);
+						driveTrain.drive(0, -0.5, 0);
 					}
 				}
 			}
@@ -228,7 +229,7 @@ public class Robot extends IterativeRobot {
 					}
 					else
 					{
-						driveTrain.drive(0, 0.5, 0);
+						driveTrain.drive(0, -0.5, 0);
 					}
 				}
 			}
@@ -242,14 +243,14 @@ public class Robot extends IterativeRobot {
 				}
 				else if(AutoStep == 9)
 				{
-					if(AutoTimer.get()>0.9)
+					if(AutoTimer.get()>1.4)
 					{
 						next = true;
 					}
 					else
 					{
 						if(LoadingStation == "Right")
-							driveTrain.drive(1.0, 0, 0);
+							driveTrain.drive(1.0, -0.02, 0);
 						else
 							driveTrain.drive(-1.0, 0, 0);
 					}
@@ -268,13 +269,59 @@ public class Robot extends IterativeRobot {
 					}
 					else
 					{
-						driveTrain.drive(0, 0.75, 0);
+						driveTrain.drive(0, -0.75, 0);
 					}
 				}
 			}
 			else if (autoSelected==rightAuto&&LoadingStation == "Left")
 			{
-				
+				if (AutoStep ==8)
+				{
+					next = turner.TurnDegrees(60, 0.75);
+				}
+				else if (AutoStep == 9)
+				{
+					AutoTimer.reset();
+					AutoTimer.start();
+					next = true;
+				}
+				else if (AutoStep == 10)
+				{
+					if(AutoTimer.get()>0.7)
+					{
+						next = true;
+					}
+					else
+					{
+						driveTrain.drive(0, -0.5, 0);
+					}
+				}
+				else if (AutoStep == 11)
+				{
+					turner.reset();
+					next = true;
+				}
+				else if (AutoStep == 12)
+				{
+					next = turner.TurnDegrees(-90, 0.5);
+				}
+				else if (AutoStep == 13)
+				{
+					AutoTimer.reset();
+					AutoTimer.start();
+					next =true;
+				}
+				else if (AutoStep == 14)
+				{
+					if(AutoTimer.get()>0.7)
+					{
+						next = true;
+					}
+					else
+					{
+						driveTrain.drive(0, -0.5, 0);
+					}
+				}
 			}
 			else if (autoSelected==leftAuto&&LoadingStation == "Right")
 			{
