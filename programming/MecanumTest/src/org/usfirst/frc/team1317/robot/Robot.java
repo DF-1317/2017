@@ -133,6 +133,7 @@ public class Robot extends IterativeRobot {
 		climber.AutoStart();
 		AutoTimer.reset();
 		AutoTimer.start();
+		turner.reset();
 	}
 
 	/**
@@ -141,125 +142,192 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		Boolean next = false;
-		switch (autoSelected) {
-		case crossingAuto:
+		if(autoSelected == crossingAuto)
+		{
 			if (AutoTimer.get() < 1) {
 				driveTrain.drive(0, -0.6, 0);
 			}
-			break;
-		case leftAuto:
+		}
+		else
+		{
 			if (AutoStep == 0) {
 				driveTrain.resetDistance();
 				next = true;
 			}
-			if (AutoStep == 1) {
+			else if (AutoStep == 1) {
 				next = alignWithPeg();
 			}	
-			if (AutoStep == 2) {
+			else if (AutoStep == 2) {
 				gearMechanism.openDoor();
 				next = true;
 			}
-			if (AutoStep == 3) {
+			else if (AutoStep == 3) {
 				next = gearMechanism.trypushGear();
 			}
-			if (AutoStep == 4) {
+			else if (AutoStep == 4) {
 				gearMechanism.retractGearPiston();
 				next = true;
 			}
-			if (AutoStep == 5) {
+			else if (AutoStep == 5) {
 				next = gearMechanism.tryCloseDoor();
 			}
-			if (AutoStep == 6) {
+			else if (AutoStep == 6) {
 				AutoTimer.reset();
 				AutoTimer.start();
+				next = true;
 			}
-			if (AutoStep == 7)
+			else if (AutoStep == 7)
 			{
 				driveTrain.drive(0, 0.5, 0);
-				if (AutoTimer.get()>0.1)
+				if (AutoTimer.get()>0.2)
 				{
 					next = true;
 				}
 			}
-			if (next)
-				AutoStep++;
-			break;
-		case rightAuto:
-			if (AutoStep == 0) {
-				driveTrain.resetDistance();
-				next = true;
-			}
-			if (AutoStep == 1) {
-				next = alignWithPeg();
-			}	
-			if (AutoStep == 2) {
-				gearMechanism.openDoor();
-				next = true;
-			}
-			if (AutoStep == 3) {
-				next = gearMechanism.trypushGear();
-			}
-			if (AutoStep == 4) {
-				gearMechanism.retractGearPiston();
-				next = true;
-			}
-			if (AutoStep == 5) {
-				next = gearMechanism.tryCloseDoor();
-			}
-			if (AutoStep == 6) {
-				AutoTimer.reset();
-				AutoTimer.start();
-			}
-			if (AutoStep == 7)
+			if (autoSelected == rightAuto && LoadingStation == "Right")
 			{
-				driveTrain.drive(0, 0.5, 0);
-				if (AutoTimer.get()>0.1)
+				if (AutoStep ==8)
 				{
+					next = turner.TurnDegrees(60, 0.75);
+				}
+				else if (AutoStep == 9)
+				{
+					AutoTimer.reset();
+					AutoTimer.start();
 					next = true;
+				}
+				else if (AutoStep == 10)
+				{
+					if(AutoTimer.get()>0.7)
+					{
+						next = true;
+					}
+					else
+					{
+						driveTrain.drive(0, 0.5, 0);
+					}
+				}
+			}
+			if (autoSelected == leftAuto && LoadingStation == "Left")
+			{
+				if (AutoStep ==8)
+				{
+					next = turner.TurnDegrees(-60, 0.75);
+				}
+				else if (AutoStep == 9)
+				{
+					AutoTimer.reset();
+					AutoTimer.start();
+					next = true;
+				}
+				else if (AutoStep == 10)
+				{
+					if(AutoTimer.get()>0.7)
+					{
+						next = true;
+					}
+					else
+					{
+						driveTrain.drive(0, 0.5, 0);
+					}
+				}
+			}
+			else if(autoSelected == defaultAuto)
+			{
+				if(AutoStep == 8)
+				{
+					AutoTimer.reset();
+					AutoTimer.start();
+					next = true;
+				}
+				else if(AutoStep == 9)
+				{
+					if(AutoTimer.get()>0.9)
+					{
+						next = true;
+					}
+					else
+					{
+						if(LoadingStation == "Right")
+							driveTrain.drive(1.0, 0, 0);
+						else
+							driveTrain.drive(-1.0, 0, 0);
+					}
+				}
+				else if(AutoStep == 10)
+				{
+					AutoTimer.reset();
+					AutoTimer.start();
+					next = true;
+				}
+				else if (AutoStep ==11)
+				{
+					if(AutoTimer.get()>0.7)
+					{
+						next = true;
+					}
+					else
+					{
+						driveTrain.drive(0, 0.75, 0);
+					}
+				}
+			}
+			else if (autoSelected==rightAuto&&LoadingStation == "Left")
+			{
+				
+			}
+			else if (autoSelected==leftAuto&&LoadingStation == "Right")
+			{
+				if (AutoStep ==8)
+				{
+					next = turner.TurnDegrees(-60, 0.75);
+				}
+				else if (AutoStep == 9)
+				{
+					AutoTimer.reset();
+					AutoTimer.start();
+					next = true;
+				}
+				else if (AutoStep == 10)
+				{
+					if(AutoTimer.get()>0.7)
+					{
+						next = true;
+					}
+					else
+					{
+						driveTrain.drive(0, 0.5, 0);
+					}
+				}
+				else if (AutoStep == 11)
+				{
+					turner.reset();
+					next = true;
+				}
+				else if (AutoStep == 12)
+				{
+					next = turner.TurnDegrees(90, 0.5);
+				}
+				else if (AutoStep == 13)
+				{
+					AutoTimer.reset();
+					AutoTimer.start();
+					next =true;
+				}
+				else if (AutoStep == 14)
+				{
+					if(AutoTimer.get()>0.7)
+					{
+						next = true;
+					}
+					else
+					{
+						driveTrain.drive(0, 0.5, 0);
+					}
 				}
 			}
 			if (next)
 				AutoStep++;
-			break;
-		case defaultAuto:
-		default:
-			if (AutoStep == 0) {
-				driveTrain.resetDistance();
-				next = true;
-			}
-			if (AutoStep == 1) {
-				next = alignWithPeg();
-			}	
-			if (AutoStep == 2) {
-				gearMechanism.openDoor();
-				next = true;
-			}
-			if (AutoStep == 3) {
-				next = gearMechanism.trypushGear();
-			}
-			if (AutoStep == 4) {
-				gearMechanism.retractGearPiston();
-				next = true;
-			}
-			if (AutoStep == 5) {
-				next = gearMechanism.tryCloseDoor();
-			}
-			if (AutoStep == 6) {
-				AutoTimer.reset();
-				AutoTimer.start();
-			}
-			if (AutoStep == 7)
-			{
-				driveTrain.drive(0, 0.5, 0);
-				if (AutoTimer.get()>0.1)
-				{
-					next = true;
-				}
-			}
-			if (next)
-				AutoStep++;
-			break;
-
 		}
 		driveTrain.AutoUpdate();
 		gearMechanism.AutoUpdate();
@@ -308,18 +376,42 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void testPeriodic() {
 
-		/*
-		 * if (AutoStep == 0) { driveForward.resetDistance(); AutoStep++; } if
-		 * (MoveJoystick.getTrigger()) { driveForward.driveForward(12, 0.5, 0);
-		 * } if (TurnJoystick.getTrigger()) { turner.TurnToDegrees(60, 0.5); }
-		 * if (TurnJoystick.getRawButton(2)){ ahrs.zeroYaw(); } if
-		 * (MoveJoystick.getRawButton(2)){ driveForward.resetDistance(); }
-		 */
+		
+		  if (AutoStep == 0) 
+		  {
+			  driveForward.resetDistance();
+			  AutoStep++; 
+			  } 
+		  if (MoveJoystick.getTrigger()) 
+		  {
+			  driveForward.driveForward(12, 0.5, 0);
+		  } 
+		 if (TurnJoystick.getTrigger()) 
+		 { 
+			 turner.TurnToDegrees(60, 0.5); 
+		 }
+		 if (TurnJoystick.getRawButton(2))
+		 {
+			 ahrs.zeroYaw(); 
+		 } 
+		 if(MoveJoystick.getRawButton(2))
+		 {
+			 driveForward.resetDistance();
+		 }
+		 
 
 		driveTrain.TestUpdate();
 		climber.TestUpdate();
 		gearMechanism.TestUpdate();
 		packetReader.getPacket();
+	}
+	
+	@Override
+	public void disabledPeriodic()
+	{
+		SmartDashboard.putData("Auto choices", chooser);
+		SmartDashboard.putData("Loading Station",LoadingStationChooser);
+		
 	}
 	
 	public boolean alignWithPeg()
