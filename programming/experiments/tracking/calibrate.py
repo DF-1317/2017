@@ -49,7 +49,8 @@ def createBars():
 # that make you happy.
 def calibrate():
   createBars()
-  cap = cv2.VideoCapture(1) # read from this camera
+  # cap = cv2.VideoCapture(1) # read from this camera
+  cap = cv2.VideoCapture('http://10.13.17.12/mjpg/video.mjpg') # IP camera
   loops = 0
 
   ''' Main loop

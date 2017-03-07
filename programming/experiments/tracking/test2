@@ -1,0 +1,21 @@
+#!/usr/bin/python
+
+input = [
+    ( 10, 20 ),
+    ( 11, 21 ),
+    ( 12, 22 )
+]
+numin = len(input)
+print numin
+print range(numin-1)
+
+ids = []
+for mloop in range (0,1):
+    for aloop in reversed(range(numin-1)):
+        w,h = input[aloop]
+	print w,h
+	if (w > h): continue
+	print "ok"
+	ids.append(aloop)
+
+print ids

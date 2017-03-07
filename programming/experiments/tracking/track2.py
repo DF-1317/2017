@@ -17,13 +17,22 @@ import json
 import imutils
 import socket
 
-DetectFrameRate       = 100  # How often to re-run the detection
+DetectFrameRate       = 20   # How often to re-run the detection
 SingleObjectThreshold = 0.25 # The size different needed to declare one region
 ShowBbox              = True # Should we show the bbox image to the user?
 # Network Stuff
 IPADDR                = '10.13.17.102' # address of the RIO
 PORTNUM               = 5800
 netSock               = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
+
+# Different color filters; color changes as we get closer/farther
+Filters = (
+    (np.array([0,10,230],np.uint8), np.array([100,255,255],np.uint8)),
+    (np.array([0,10,100],np.uint8), np.array([100,255,220],np.uint8))
+    )
+FilterToUse = 0
+FilterSwitchThreshold = float(0.90)
+FilterRetries = 3
 
 ''' Detect our target
 
@@ -36,21 +45,43 @@ netSock               = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
 def detect(mask):
   ret, thresh = cv2.threshold(mask, 127,255,0)
   _, contours, _ = cv2.findContours( thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-  # print len(contours)
-  if (2 > len(contours)): return None
+  numContours = len(contours)
+  print 'Number of contours ', numContours
+  if (2 > numContours): return None
   
   areas = [cv2.contourArea(c) for c in contours]
-  maxIdxs = np.argsort(areas)[-2:][::-1]
+  sorted = np.argsort(areas)
+  print cv2.boundingRect(contours[sorted[numContours-1]])
+  print cv2.boundingRect(contours[sorted[numContours-2]])
+  print cv2.boundingRect(contours[sorted[numContours-3]])
+  print cv2.boundingRect(contours[sorted[numContours-4]])
+  
+  maxIdxs = sorted[-2:][::-1]
+  # Look for largest where the height is > width
+  maxIdxs2 = []
+  
+  for areaLoop in reversed(range(numContours)):
+      x,y,w,h = cv2.boundingRect(contours[sorted[areaLoop]])
+      if (w > h): continue
+      maxIdxs2.append(sorted[areaLoop])
+      if (1 < len(maxIdxs2)): break
+  maxIdxs = maxIdxs2
+  if (2>len(maxIdxs)): return None
+  
   x,y,w,h = cv2.boundingRect(contours[maxIdxs[0]])
   x2,y2,w2,h2 = cv2.boundingRect(contours[maxIdxs[1]])
   area1 = w*h
   area2 = w2*h2
-  print area1, area2
+  print "Areas are: ", area1, area2
+  print "Coords 1: ", x, y, w, h
+  print "Coords 2: ", x2, y2, w2, h2
   pct = 0
   if (area1>area2): pct = (area1-area2)/area1
   else: pct = (area2-area1)/area2
   # If close in size, adjust x,y,...; if large difference, use the coords of largest
-  if ( SingleObjectThreshold > pct ):
+  # Put in code for minimum area to consider; otherwise not a target
+  # if ( SingleObjectThreshold > pct ):
+  if (True):
       if (x < x2):
           w = x2+w2-x
       else:
@@ -63,6 +94,7 @@ def detect(mask):
           y = y2
           
   # The bounding box for our targets
+  print "BBox: ", w, y, w, h
   return (x,y,w,h)
     
 ''' Track our target
@@ -77,10 +109,13 @@ def track():
   # cap = cv2.VideoCapture(1) # USB camera
   cap = cv2.VideoCapture('http://10.13.17.12/mjpg/video.mjpg') # IP camera
   loops = DetectFrameRate
-  lower = np.array([0,10,230],np.uint8)
-  upper = np.array([179,255,255],np.uint8)
   tracker = None
   bbox = None
+  lastArea = 1
+  retryCount = 0
+  FilterToUse = 0
+  lower = Filters[FilterToUse][0]
+  upper = Filters[FilterToUse][1]
   
   ''' Main tracking loop
   
@@ -103,18 +138,44 @@ def track():
     '''
     if (DetectFrameRate < loops):
       loops = 0
-      mask = cv2.inRange(hsv, lower, upper)
-      mask = cv2.erode(mask,None,iterations=2)
-      mask = cv2.dilate(mask,None,iterations=2)
+      area = 0
+      print "Using filters: ", FilterToUse
+      
+      # mask = cv2.erode(mask,None,iterations=2)
+      # mask = cv2.dilate(mask,None,iterations=2)
       
       # MIL, BOOSTING, KCF, TLD, MEDIANFLOW or GOTURN
       # MEDIAFLOW seems to work best for our job; all the others
       # had trouble keeping up, or just got lost
       tracker = cv2.Tracker_create("MEDIANFLOW")
+      mask = cv2.inRange(hsv, lower, upper)
       bbox = detect(mask)
       if None == bbox:
-          bbox = (50,50,50,50)
+          bbox = (0,0,10,10)
+      else:
+          area = int(bbox[2]*bbox[3])
+          
+      # See if we had a big change in area; may need new filter
+      print "Tracking areas: ", lastArea, area
+      diff = float(area)/float(lastArea)
+      if ( FilterSwitchThreshold > diff):
+          retryCount += 1
+          if (retryCount > FilterRetries):
+              print "Switching filters...", diff
+              if (0<FilterToUse):
+                  FilterToUse = 0
+              else:
+                  FilterToUse = 1
+              lower = Filters[FilterToUse][0]
+              upper = Filters[FilterToUse][1]
+              mask = cv2.inRange(hsv, lower, upper)
+              bbox = detect(mask)
+              if None == bbox:
+                  bbox = (0,0,10,10)
+      else: retryCount = 0
+      
       ok = tracker.init(img, bbox)
+      lastArea = area+1
     
     ''' React to tracking
     
