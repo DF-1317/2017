@@ -59,6 +59,9 @@ public class MecanumDriveTrain implements RobotComponent {
 	
 	AHRS gyro;
 	
+	Timer MoveTimer;
+	int AutoStep;
+	
 	public MecanumDriveTrain(Joystick move, Joystick turn, AHRS NavX) //add AHRS Navx to the code
 	{
 		//Initializes motor objects
@@ -91,7 +94,8 @@ public class MecanumDriveTrain implements RobotComponent {
 		SmartDashboard.putBoolean("Throttle On", throttleOn);
 		SmartDashboard.putBoolean("Direction Reversed", motorsReversed);
 		double initialThrottleValue =-0.425*MoveJoystick.getThrottle()+0.575;
-		SmartDashboard.putNumber("Throttle Value", initialThrottleValue);		
+		SmartDashboard.putNumber("Throttle Value", initialThrottleValue);
+		MoveTimer = new Timer();
 		}
 	
 	//This method is called at the start of Autonomous
@@ -323,6 +327,149 @@ public class MecanumDriveTrain implements RobotComponent {
 	public void drive(double x,double y, double rotation)
 	{
 		Drivetrain.mecanumDrive_Cartesian(x, y, rotation, 0);
+	}
+	
+	
+	public void ResetLineUpSteps()
+	{
+		AutoStep = 0;
+	}
+	public boolean lineUpWithRightPeg(PIDTurning turner)
+	{
+		if(AutoStep == 0)
+		{
+			MoveTimer.reset();
+			MoveTimer.start();
+			AutoStep++;
+			return false;
+		}
+		if(AutoStep == 1)
+		{
+			if(MoveTimer.get() <=0.3)
+			{
+				drive(0,-0.75,0);
+			}
+			else
+			{
+				AutoStep++;
+			}
+			return false;
+		}
+		if(AutoStep == 2)
+		{
+			boolean next = turner.TurnToDegrees(-60.0,0.9);
+			if (next == true)
+				AutoStep++;
+			return false;
+		}
+		if(AutoStep == 3)
+		{
+			MoveTimer.reset();
+			MoveTimer.start();
+			AutoStep++;
+			return false;
+		}
+		if(AutoStep == 4)
+		{
+			if(MoveTimer.get() <=0.5)
+			{
+				drive(0,-0.75,0);
+			}
+			else
+			{
+				AutoStep++;
+			}
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+	
+	public boolean lineUpWithLeftPeg(PIDTurning turner)
+	{
+		if(AutoStep == 0)
+		{
+			MoveTimer.reset();
+			MoveTimer.start();
+			AutoStep++;
+			return false;
+		}
+		if(AutoStep == 1)
+		{
+			if(MoveTimer.get() <=0.3)
+			{
+				drive(0,-0.75,0);
+			}
+			else
+			{
+				AutoStep++;
+			}
+			return false;
+		}
+		if(AutoStep == 2)
+		{
+			boolean next = turner.TurnToDegrees(60.0,0.9);
+			if (next == true)
+				AutoStep++;
+			return false;
+		}
+		if(AutoStep == 3)
+		{
+			MoveTimer.reset();
+			MoveTimer.start();
+			AutoStep++;
+			return false;
+		}
+		if(AutoStep == 4)
+		{
+			if(MoveTimer.get() <=0.5)
+			{
+				drive(0,-0.75,0);
+			}
+			else
+			{
+				AutoStep++;
+			}
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+	
+	public boolean lineUpWithCenterPeg()
+	{
+		if(AutoStep ==0)
+		{
+			MoveTimer.reset();
+			MoveTimer.start();
+			AutoStep = 1;
+			return false;
+		}
+		else if(AutoStep ==1)
+		{
+			if(MoveTimer.get()<=1.2)
+			{
+				drive(0, -0.6, 0);
+			}
+			else
+			{
+				AutoStep++;
+			}
+			return false;
+		}
+		else if(AutoStep == 2)
+		{
+			return true;
+		}
+		else
+		{
+			return true;
+		}
+		
 	}
 	
 

@@ -17,7 +17,7 @@ public class PIDTurning implements PIDOutput {
 	static final double kP = 0.01;
 	static final double kI = 0.00;
 	static final double kD = 0.00;
-	static final double kToleranceDegrees = 1.0;
+	static final double kToleranceDegrees = 5.0;
 	
 	double TurnRate;
 	double OriginalDegrees;

@@ -30,6 +30,12 @@ public class Robot extends IterativeRobot {
 	String LoadingStation;
 	SendableChooser<String> LoadingStationChooser = new SendableChooser<>();
 	
+	final boolean VisionTrackingOn = true;
+	final boolean VisionTrackingOff = false;
+	boolean VisionTracking;
+	SendableChooser<Boolean> VisionTrackingChooser = new SendableChooser<>();
+	
+	
 	int AutoStep;
 
 	// variables to hold the joystick objects.
@@ -70,6 +76,10 @@ public class Robot extends IterativeRobot {
 		LoadingStationChooser.addObject("Left Loading Station", LeftLoadingStation);
 		LoadingStationChooser.addObject("Right Loading Station", RightLoadingStation);
 		SmartDashboard.putData("Loading Station",LoadingStationChooser);
+		
+		VisionTrackingChooser.addDefault("Vision Tracking On", VisionTrackingOn);
+		VisionTrackingChooser.addObject("Vision Tracking Off", VisionTrackingOff);
+		SmartDashboard.putData("Vision Tracking",VisionTrackingChooser);
 
 		// initializes the NavX-MXP
 		ahrs = new AHRS(SerialPort.Port.kMXP);
@@ -110,6 +120,7 @@ public class Robot extends IterativeRobot {
 									// automatically added
 		autoSelected = chooser.getSelected();
 		loadingStationSelected = LoadingStationChooser.getSelected();
+		VisionTracking = VisionTrackingChooser.getSelected();
 		if(loadingStationSelected == AutoLoadingStation)
 		{
 			if(driverStation.getAlliance()==DriverStation.Alliance.Blue)
@@ -134,7 +145,15 @@ public class Robot extends IterativeRobot {
 		AutoTimer.reset();
 		AutoTimer.start();
 		turner.reset();
-		AutoStep = 7;
+		/*if(autoSelected == rightAuto)
+		{
+			AutoStep = 0;
+		}
+		else
+		{
+			AutoStep = 7;
+		}*/
+		AutoStep =0;
 	}
 
 	/**
@@ -145,7 +164,7 @@ public class Robot extends IterativeRobot {
 		Boolean next = false;
 		if(autoSelected == crossingAuto)
 		{
-			if (AutoTimer.get() < 1.7) {
+			if (AutoTimer.get() < 3) {
 				driveTrain.drive(0, -0.6, 0);
 			}
 		}
@@ -154,9 +173,28 @@ public class Robot extends IterativeRobot {
 			if (AutoStep == 0) {
 				driveTrain.resetDistance();
 				next = true;
+				driveTrain.ResetLineUpSteps();
 			}
 			else if (AutoStep == 1) {
-				next = alignWithPeg();
+				if(VisionTracking)
+				{
+					next = alignWithPeg();
+				}
+				else
+				{
+					if(autoSelected==defaultAuto)
+					{
+						next = driveTrain.lineUpWithCenterPeg();
+					}
+					else if(autoSelected==leftAuto)
+					{
+						next = driveTrain.lineUpWithLeftPeg(turner);
+					}
+					else if(autoSelected==rightAuto)
+					{
+						next = driveTrain.lineUpWithRightPeg(turner);
+					}
+				}
 			}	
 			else if (AutoStep == 2) {
 				gearMechanism.openDoor();
@@ -180,7 +218,7 @@ public class Robot extends IterativeRobot {
 			else if (AutoStep == 7)
 			{
 				driveTrain.drive(0, 0.5, 0);
-				if (AutoTimer.get()>0.2)
+				if (AutoTimer.get()>0.4)
 				{
 					next = true;
 				}
@@ -189,7 +227,7 @@ public class Robot extends IterativeRobot {
 			{
 				if (AutoStep ==8)
 				{
-					next = turner.TurnDegrees(60, 0.75);
+					next = turner.TurnDegrees(60, 0.9);
 				}
 				else if (AutoStep == 9)
 				{
@@ -263,7 +301,7 @@ public class Robot extends IterativeRobot {
 				}
 				else if (AutoStep ==11)
 				{
-					if(AutoTimer.get()>0.7)
+					if(AutoTimer.get()>3)
 					{
 						next = true;
 					}
@@ -414,6 +452,10 @@ public class Robot extends IterativeRobot {
 		climber.TeleopUpdate(); // uses the joysticks to control the climber.
 		SmartDashboard.putNumber("Acceleration X NavX",ahrs.getWorldLinearAccelX());
 		SmartDashboard.putNumber("Acceleration Y NavX",ahrs.getWorldLinearAccelY());
+		if(MoveJoystick.getRawButton(7)==true)
+		{
+			ahrs.zeroYaw();
+		}
 
 	}
 
@@ -458,6 +500,7 @@ public class Robot extends IterativeRobot {
 	{
 		SmartDashboard.putData("Auto choices", chooser);
 		SmartDashboard.putData("Loading Station",LoadingStationChooser);
+		SmartDashboard.putData("Vision Tracking",VisionTrackingChooser);
 		
 	}
 	

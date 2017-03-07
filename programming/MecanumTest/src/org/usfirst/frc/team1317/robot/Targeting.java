@@ -30,6 +30,10 @@ public class Targeting {
 	{
 		if(boundingBox != null)
 		{
+			if((int)boundingBox.get("x")==0&&(int)boundingBox.get("y")==0 && (int)boundingBox.get("w")==0)
+			{
+				return;
+			}
 			currentBoundingBox = boundingBox;
 		}
 	}
@@ -41,49 +45,56 @@ public class Targeting {
 		double forward=0;
 		Boolean DoneAligningX=false;
 		Boolean DoneMovingForward=false;
-		int xNow = (int)currentBoundingBox.get("x") + (int)currentBoundingBox.get("w")/2;
-		double distance = estimateDistancetoTarget();
-		if (Math.abs(distance)>DistanceError&&distance>0)
+		if (currentBoundingBox == null)
 		{
-			if(distance<6)
+			return false;
+		}
+		else
+		{
+			int xNow = (int)currentBoundingBox.get("x") + (int)currentBoundingBox.get("w")/2;
+			double distance = estimateDistancetoTarget();
+			if (Math.abs(distance)>DistanceError&&distance>0)
 			{
-				forward = ForwardSpeed3;
-			}
-			if(distance<14)
-			{
-				forward = ForwardSpeed2;
+				if(distance<6)
+				{
+					forward = ForwardSpeed3;
+				}
+				if(distance<14)
+				{
+					forward = ForwardSpeed2;
+				}
+				else
+				{
+					forward=ForwardSpeed;
+				}
 			}
 			else
 			{
-				forward=ForwardSpeed;
+				DoneMovingForward = true;
 			}
-		}
-		else
-		{
-			DoneMovingForward = true;
-		}
-		if(Math.abs(xNow-TargetX)<=TargetXError)
-		{
-			turning = 0;
-			sliding = 0;
-			DoneAligningX = true;
-		}
-		else if (xNow<TargetX)
-		{
-			sliding = SlidingSpeed;
-		}
-		else if (xNow>TargetX)
-		{
-			sliding = -SlidingSpeed;
-		}
-		driveTrain.drive(sliding, forward, turning);
-		if(DoneAligningX&&DoneMovingForward)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
+			if(Math.abs(xNow-TargetX)<=TargetXError)
+			{
+				turning = 0;
+				sliding = 0;
+				DoneAligningX = true;
+			}
+			else if (xNow<TargetX)
+			{
+				sliding = SlidingSpeed;
+			}
+			else if (xNow>TargetX)
+			{
+				sliding = -SlidingSpeed;
+			}
+			driveTrain.drive(sliding, forward, turning);
+			if(DoneAligningX&&DoneMovingForward)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 	}
 	
