@@ -38,8 +38,8 @@ if __name__ == '__main__' :
     # video = cv2.VideoCapture("videos/chaplin.mp4")
     # video = cv2.VideoCapture(0)
     # video = cv2.VideoCapture('http://10.13.17.69/axis-cgi/mjpeg/video.cgi?camera=1&resolution=640x480')
-    video = cv2.VideoCapture('http://10.13.17.69/mjpg/video.mjpg')
-    
+    video = cv2.VideoCapture('http://10.13.17.12/mjpg/video.mjpg')
+
     # Exit if video not opened.
     if not video.isOpened():
         print "Could not open video"

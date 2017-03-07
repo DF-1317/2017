@@ -1,0 +1,45 @@
+when starting out with a new sim card [which is the disk drive of the Pi]
+you need to download and overlay an img file. Download from:
+https://www.raspberrypi.org/downloads/
+Once unzipped, follow the instructions here:
+https://www.raspberrypi.org/documentation/installation/installing-images/README.md
+
+The first time you boot on the sim, there is some setup of various things.
+- sudo bash, then change the password of the pi user; something easy to remember
+- change the keyboard to US English via Preferences -> Mouse and Keyboard Settings
+- activate ssh via Preferences -> Raspberry Pi Configuration -> Interfaces
+
+To make login from your laptop easier, copy over your public key
+- first on the pi, mkdir .ssh
+- on the laptop, scp .ssh/id_rsa.pub pi@<ip>:.ssh/authorized_keys
+- on the pi, chmod 700 .ssh
+Now try an ssh pi@<ip> [accept the key signature on first login].
+If more than one user want access, append their public key to the
+authorized_keys file.
+
+Need to load and build some software.
+[as of this writting, the pi was loaded with Raspian, based on Debian Jessie]
+
+If you are doing vision work with OpenCV and Python, here are the many
+steps to getting to your goal.
+If you need to build from source, like opencv, I like to install things
+in my home area. This usually means 1 or two extra parameters and maybe
+some loging environment setup step. All are listed here.
+I followed the steps, more or less, from:
+http://www.pyimagesearch.com/2016/04/18/install-guide-raspberry-pi-3-raspbian-jessie-opencv-3/
+- ssh into the pi  # get terminal access to the pi
+- sudo bash        # become the root user for a few commands
+- apt-get update   # refresh the list of what software is available
+- apt-get upgrade  # update the pi to the latest and greatest
+- apt-get install build-essential cmake pkg-config
+- apt-get install htop  # nice tool to view system status
+- ...etc...
+- wget https://bootstrap.pypa.io/get-pip.py
+- python get-pip.py
+- pip install imutils
+- get and build ffmpeg
+++ see: https://www.assetbank.co.uk/support/documentation/install/ffmpeg-debian-squeeze/ffmpeg-debian-jessie/
+
+
+
+Configuring your programs to startup when the pi boots up.
