@@ -45,6 +45,7 @@ public class PIDTurning implements PIDOutput {
 		if (turnController.onTarget())
 		{
 			turnController.disable();
+			DriveTrain.drive(0, 0, 0);
 			return true;
 		}
 		else

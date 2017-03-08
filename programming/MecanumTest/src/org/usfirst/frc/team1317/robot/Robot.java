@@ -167,6 +167,10 @@ public class Robot extends IterativeRobot {
 			if (AutoTimer.get() < 3) {
 				driveTrain.drive(0, -0.6, 0);
 			}
+			else
+			{
+				driveTrain.drive(0, 0, 0);
+			}
 		}
 		else
 		{
@@ -190,6 +194,7 @@ public class Robot extends IterativeRobot {
 						else
 						{
 							next = true;
+							driveTrain.drive(0, 0, 0);
 						}
 					}
 				}
@@ -220,6 +225,12 @@ public class Robot extends IterativeRobot {
 				if(VisionTracking)
 				{
 					next = alignWithPeg();
+					if(next)
+					{
+						driveTrain.drive(0, 0, 0);
+						AutoTimer.reset();
+						AutoTimer.start();
+					}
 				}
 				else
 				{
@@ -229,11 +240,38 @@ public class Robot extends IterativeRobot {
 					}
 					else if(autoSelected==leftAuto)
 					{
-						next = driveTrain.lineUpWithLeftPeg(turner);
+						if(ahrs.isConnected())
+						{
+							next = driveTrain.lineUpWithLeftPeg(turner);
+						}
+						else{
+							if(AutoTimer.get()<0.5)
+							{
+								driveTrain.drive(0, 0, 0.5);
+							}
+							else
+							{
+								next =true;
+							}
+						}
 					}
 					else if(autoSelected==rightAuto)
 					{
-						next = driveTrain.lineUpWithRightPeg(turner);
+						if(ahrs.isConnected())
+						{
+							next = driveTrain.lineUpWithRightPeg(turner);
+						}
+						else
+						{
+							if(AutoTimer.get()<0.5)
+							{
+								driveTrain.drive(0, 0, -0.5);
+							}
+							else
+							{
+								next =true;
+							}
+						}
 					}
 				}
 			}	
@@ -262,13 +300,28 @@ public class Robot extends IterativeRobot {
 				if (AutoTimer.get()>0.4)
 				{
 					next = true;
+					driveTrain.drive(0, 0, 0);
+					AutoTimer.reset();
+					AutoTimer.start();
 				}
 			}
 			if (autoSelected == rightAuto && LoadingStation == "Right")
 			{
 				if (AutoStep ==8)
 				{
-					next = turner.TurnToDegrees(0, 0.9);
+					if(ahrs.isConnected())
+						next = turner.TurnToDegrees(0, 0.9);
+					else
+					{
+						if(AutoTimer.get()<0.5)
+						{
+							driveTrain.drive(0, 0, 0.5);
+						}
+						else
+						{
+							next =true;
+						}
+					}
 				}
 				else if (AutoStep == 9)
 				{
@@ -280,6 +333,7 @@ public class Robot extends IterativeRobot {
 				{
 					if(AutoTimer.get()>0.7)
 					{
+						driveTrain.drive(0, 0, 0);
 						next = true;
 					}
 					else
@@ -292,7 +346,19 @@ public class Robot extends IterativeRobot {
 			{
 				if (AutoStep ==8)
 				{
-					next = turner.TurnToDegrees(0,0.9);
+					if(ahrs.isConnected())
+						next = turner.TurnToDegrees(0, 0.9);
+					else
+					{
+						if(AutoTimer.get()<0.5)
+						{
+							driveTrain.drive(0, 0, -0.5);
+						}
+						else
+						{
+							next =true;
+						}
+					}
 				}
 				else if (AutoStep == 9)
 				{
@@ -305,6 +371,7 @@ public class Robot extends IterativeRobot {
 					if(AutoTimer.get()>0.7)
 					{
 						next = true;
+						driveTrain.drive(0, 0, 0);
 					}
 					else
 					{
@@ -325,18 +392,26 @@ public class Robot extends IterativeRobot {
 					if(AutoTimer.get()>1.4)
 					{
 						next = true;
+						driveTrain.drive(0, 0, 0);
 					}
 					else
 					{
 						if(LoadingStation == "Right")
 							driveTrain.drive(1.0, -0.02, 0);
 						else
-							driveTrain.drive(-1.0, 0, 0);
+							driveTrain.drive(-1.0, 0.02, 0);
 					}
 				}
 				else if(AutoStep == 10)
 				{
-					next = turner.TurnToDegrees(0, 0.9);
+					if(ahrs.isConnected())
+					{
+						next = turner.TurnToDegrees(0, 0.9);
+					}
+					else
+					{
+						next = true;
+					}
 				}
 				else if(AutoStep == 11)
 				{
@@ -349,6 +424,7 @@ public class Robot extends IterativeRobot {
 					if(AutoTimer.get()>3)
 					{
 						next = true;
+						driveTrain.drive(0, 0, 0);
 					}
 					else
 					{
@@ -360,7 +436,20 @@ public class Robot extends IterativeRobot {
 			{
 				if (AutoStep ==8)
 				{
-					next = turner.TurnToDegrees(0, 0.9);
+					if(ahrs.isConnected())
+						next = turner.TurnToDegrees(0, 0.9);
+					else
+					{
+						if(AutoTimer.get()<0.5)
+						{
+							driveTrain.drive(0, 0, 0.5);
+						}
+						else
+						{
+							driveTrain.drive(0, 0, 0);
+							next =true;
+						}
+					}
 				}
 				else if (AutoStep == 9)
 				{
@@ -373,6 +462,7 @@ public class Robot extends IterativeRobot {
 					if(AutoTimer.get()>0.7)
 					{
 						next = true;
+						driveTrain.drive(0, 0, 0);
 					}
 					else
 					{
@@ -382,11 +472,27 @@ public class Robot extends IterativeRobot {
 				else if (AutoStep == 11)
 				{
 					turner.reset();
+					AutoTimer.reset();
+					AutoTimer.start();
 					next = true;
 				}
 				else if (AutoStep == 12)
 				{
-					next = turner.TurnDegrees(-90, 0.5);
+					if(ahrs.isConnected())
+					{
+						next = turner.TurnDegrees(-90, 0.5);
+					}
+					else
+					{
+						if(AutoTimer.get()<1.5)
+						{
+							driveTrain.drive(0, 0, -0.5);
+						}
+						else
+						{
+							next = true;
+						}
+					}
 				}
 				else if (AutoStep == 13)
 				{
@@ -398,6 +504,7 @@ public class Robot extends IterativeRobot {
 				{
 					if(AutoTimer.get()>0.7)
 					{
+						driveTrain.drive(0, 0, 0);
 						next = true;
 					}
 					else
@@ -410,7 +517,19 @@ public class Robot extends IterativeRobot {
 			{
 				if (AutoStep ==8)
 				{
-					next = turner.TurnToDegrees(0, 0.9);
+					if(ahrs.isConnected())
+						next = turner.TurnToDegrees(0, 0.9);
+					else
+					{
+						if(AutoTimer.get()<0.5)
+						{
+							driveTrain.drive(0, 0, -0.5);
+						}
+						else
+						{
+							next =true;
+						}
+					}
 				}
 				else if (AutoStep == 9)
 				{
@@ -423,6 +542,7 @@ public class Robot extends IterativeRobot {
 					if(AutoTimer.get()>0.7)
 					{
 						next = true;
+						driveTrain.drive(0, 0, 0);
 					}
 					else
 					{
@@ -436,7 +556,21 @@ public class Robot extends IterativeRobot {
 				}
 				else if (AutoStep == 12)
 				{
-					next = turner.TurnDegrees(90, 0.5);
+					if (ahrs.isConnected())
+					{
+						next = turner.TurnDegrees(90, 0.9);
+					}
+					else
+					{
+						if(AutoTimer.get()<1.5)
+						{
+							driveTrain.drive(0, 0, 0.5);
+						}
+						else
+						{
+							next = true;
+						}
+					}
 				}
 				else if (AutoStep == 13)
 				{
@@ -448,6 +582,7 @@ public class Robot extends IterativeRobot {
 				{
 					if(AutoTimer.get()>0.7)
 					{
+						driveTrain.drive(0, 0, 0);
 						next = true;
 					}
 					else
