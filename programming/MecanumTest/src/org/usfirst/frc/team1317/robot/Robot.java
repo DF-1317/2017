@@ -94,7 +94,7 @@ public class Robot extends IterativeRobot {
 		// initializes the gear Mechanism, with what joystick to use.
 		// change this based on which robot we are deploying code to.
 		gearMechanism = new GearMechanismDoubleSolenoid(OtherJoystick);
-		AutoStep = 7;
+		AutoStep = 0;
 		turner = new PIDTurning(driveTrain, ahrs);
 		driveForward = new PIDDriveDistance(driveTrain, ahrs);
 		SmartDashboard.putNumber("Number of Solenoids", PortsJNI.getNumSolenoidChannels());
@@ -170,10 +170,51 @@ public class Robot extends IterativeRobot {
 		}
 		else
 		{
-			if (AutoStep == 0) {
+			if (AutoStep == -2) {
 				driveTrain.resetDistance();
 				next = true;
 				driveTrain.ResetLineUpSteps();
+				AutoTimer.reset();
+				AutoTimer.start();
+			}
+			else if (AutoStep == -1)
+			{
+				if(autoSelected==rightAuto||autoSelected == leftAuto)
+				{
+					if(VisionTracking)
+					{
+						if(AutoTimer.get()<=0.1)
+						{
+							driveTrain.drive(0, 0.4, 0);
+						}
+						else
+						{
+							next = true;
+						}
+					}
+				}
+				else
+				{
+					next = true;
+				}
+			}
+			else if (AutoStep == 0)
+			{
+				if(VisionTracking)
+				{
+					if(autoSelected == leftAuto)
+					{
+						next = turner.TurnToDegrees(60, 0.9);
+					}
+					else if(autoSelected == rightAuto)
+					{
+						next = turner.TurnToDegrees(-60, 0.9);
+					}
+					else
+					{
+						next = true;
+					}
+				}
 			}
 			else if (AutoStep == 1) {
 				if(VisionTracking)
@@ -227,7 +268,7 @@ public class Robot extends IterativeRobot {
 			{
 				if (AutoStep ==8)
 				{
-					next = turner.TurnDegrees(60, 0.9);
+					next = turner.TurnToDegrees(0, 0.9);
 				}
 				else if (AutoStep == 9)
 				{
@@ -251,7 +292,7 @@ public class Robot extends IterativeRobot {
 			{
 				if (AutoStep ==8)
 				{
-					next = turner.TurnDegrees(-60, 0.75);
+					next = turner.TurnToDegrees(0,0.9);
 				}
 				else if (AutoStep == 9)
 				{
@@ -295,11 +336,15 @@ public class Robot extends IterativeRobot {
 				}
 				else if(AutoStep == 10)
 				{
+					next = turner.TurnToDegrees(0, 0.9);
+				}
+				else if(AutoStep == 11)
+				{
 					AutoTimer.reset();
 					AutoTimer.start();
 					next = true;
 				}
-				else if (AutoStep ==11)
+				else if (AutoStep ==12)
 				{
 					if(AutoTimer.get()>3)
 					{
@@ -315,7 +360,7 @@ public class Robot extends IterativeRobot {
 			{
 				if (AutoStep ==8)
 				{
-					next = turner.TurnDegrees(60, 0.75);
+					next = turner.TurnToDegrees(0, 0.9);
 				}
 				else if (AutoStep == 9)
 				{
@@ -365,7 +410,7 @@ public class Robot extends IterativeRobot {
 			{
 				if (AutoStep ==8)
 				{
-					next = turner.TurnDegrees(-60, 0.75);
+					next = turner.TurnToDegrees(0, 0.9);
 				}
 				else if (AutoStep == 9)
 				{
@@ -407,7 +452,7 @@ public class Robot extends IterativeRobot {
 					}
 					else
 					{
-						driveTrain.drive(0, 0.5, 0);
+						driveTrain.drive(0, 0.75, 0);
 					}
 				}
 			}
