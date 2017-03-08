@@ -18,6 +18,12 @@ public class Targeting {
 	final double TurningSpeed = 0.5;
 	
 	
+	private byte liftNumber;
+	final byte LeftLift = 0;
+	final byte CenterLift = 1;
+	final byte RightLift = 2;
+
+	
 	MecanumDriveTrain driveTrain;
 	Map<String,Object> currentBoundingBox;
 
@@ -47,6 +53,18 @@ public class Targeting {
 		Boolean DoneMovingForward=false;
 		if (currentBoundingBox == null)
 		{
+			if(liftNumber == LeftLift)
+			{
+				driveTrain.drive(-0.3, 0, 0);
+			}
+			else if (liftNumber == RightLift)
+			{
+				driveTrain.drive(0.3, 0, 0);
+			}
+			else if (liftNumber == CenterLift)
+			{
+				
+			}
 			return false;
 		}
 		else
@@ -101,5 +119,10 @@ public class Targeting {
 	public double estimateDistancetoTarget()
 	{
 		return (WidthAtTarget-(int)currentBoundingBox.get("w"))/(WidthAtTarget-WidthAtFarthestPoint)*FarthestPointInches;
+	}
+	
+	public void setLiftTarget(byte target)
+	{
+		liftNumber = target;
 	}
 }
