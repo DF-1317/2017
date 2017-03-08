@@ -22,6 +22,8 @@ public class Targeting {
 	final byte LeftLift = 0;
 	final byte CenterLift = 1;
 	final byte RightLift = 2;
+	
+	int CenterCounter = 0;
 
 	
 	MecanumDriveTrain driveTrain;
@@ -63,7 +65,23 @@ public class Targeting {
 			}
 			else if (liftNumber == CenterLift)
 			{
-				
+				if(CenterCounter>150)
+				{
+					driveTrain.drive(0.4, 0, 0);
+				}
+				else if (CenterCounter>450)
+				{
+					driveTrain.drive(-0.4, 0, 0);
+				}
+				else if (CenterCounter>600)
+				{
+					CenterCounter=0;
+				}
+				else
+				{
+					driveTrain.drive(-0.4, 0, 0);
+					
+				}
 			}
 			return false;
 		}
