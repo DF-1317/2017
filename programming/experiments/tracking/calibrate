@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 """ Test the ability to identify and track an object.
 
   Our setup used 2 strips of 3M 8800? tape and a green led light ring.

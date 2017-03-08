@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 """ Test the ability to identify and track an object.
 
   Our setup used 2 strips of 3M 8800? tape and a green led light ring.
@@ -16,10 +18,12 @@ import sys
 import json
 import imutils
 import socket
+import time
 
 DetectFrameRate       = 20   # How often to re-run the detection
 SingleObjectThreshold = 0.25 # The size different needed to declare one region
 ShowBbox              = True # Should we show the bbox image to the user?
+UseErodeAndDilate     = False
 # Network Stuff
 IPADDR                = '10.13.17.102' # address of the RIO
 PORTNUM               = 5800
@@ -27,12 +31,20 @@ netSock               = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
 
 # Different color filters; color changes as we get closer/farther
 Filters = (
-    (np.array([0,10,230],np.uint8), np.array([100,255,255],np.uint8)),
+    (np.array([0,50,120],np.uint8), np.array([100,255,255],np.uint8)),
+    (np.array([0,10,220],np.uint8), np.array([100,255,255],np.uint8)),
     (np.array([0,10,100],np.uint8), np.array([100,255,220],np.uint8))
     )
 FilterToUse = 0
+FilterEntries = len(Filters)
 FilterSwitchThreshold = float(0.90)
 FilterRetries = 3
+
+MinArea = 80
+
+JumpCount = 0
+JumpLimit = 6
+JumpThreshold = 5
 
 ''' Detect our target
 
@@ -73,6 +85,7 @@ def detect(mask):
   area1 = w*h
   area2 = w2*h2
   print "Areas are: ", area1, area2
+  if (area1 < MinArea or area2 < MinArea): return None
   print "Coords 1: ", x, y, w, h
   print "Coords 2: ", x2, y2, w2, h2
   pct = 0
@@ -105,9 +118,18 @@ def detect(mask):
    with the calibration program.
 '''
 def track():
-  # cap = cv2.VideoCapture(0) # built in camera
-  # cap = cv2.VideoCapture(1) # USB camera
-  cap = cv2.VideoCapture('http://10.13.17.12/mjpg/video.mjpg') # IP camera
+  global JumpCount
+  global JumpThreshold
+  global JumpLimit
+  
+  cap = None
+  while (not cap):
+      # cap = cv2.VideoCapture(0) # built in camera
+      # cap = cv2.VideoCapture(1) # USB camera
+      cap = cv2.VideoCapture('http://10.13.17.12/mjpg/video.mjpg') # IP camera
+      ok, img = cap.read()  # try a read
+      if (not ok): cap = None
+      
   loops = DetectFrameRate
   tracker = None
   bbox = None
@@ -116,6 +138,8 @@ def track():
   FilterToUse = 0
   lower = Filters[FilterToUse][0]
   upper = Filters[FilterToUse][1]
+  oldX = 0
+  oldY = 0
   
   ''' Main tracking loop
   
@@ -141,41 +165,57 @@ def track():
       area = 0
       print "Using filters: ", FilterToUse
       
-      # mask = cv2.erode(mask,None,iterations=2)
-      # mask = cv2.dilate(mask,None,iterations=2)
+      mask = cv2.inRange(hsv, lower, upper)
+      if (UseErodeAndDilate):
+	      mask = cv2.erode(mask,None,iterations=2)
+	      mask = cv2.dilate(mask,None,iterations=2)
       
       # MIL, BOOSTING, KCF, TLD, MEDIANFLOW or GOTURN
       # MEDIAFLOW seems to work best for our job; all the others
       # had trouble keeping up, or just got lost
       tracker = cv2.Tracker_create("MEDIANFLOW")
-      mask = cv2.inRange(hsv, lower, upper)
+      
       bbox = detect(mask)
       if None == bbox:
           bbox = (0,0,10,10)
       else:
           area = int(bbox[2]*bbox[3])
-          
+    
       # See if we had a big change in area; may need new filter
       print "Tracking areas: ", lastArea, area
       diff = float(area)/float(lastArea)
-      if ( FilterSwitchThreshold > diff):
-          retryCount += 1
-          if (retryCount > FilterRetries):
+      if (FilterSwitchThreshold > diff):
+        retryCount += 1
+        if (retryCount > FilterRetries):
               print "Switching filters...", diff
-              if (0<FilterToUse):
-                  FilterToUse = 0
-              else:
-                  FilterToUse = 1
+              FilterToUse += 1
+              if (FilterEntries<=FilterToUse): FilterToUse = 0
               lower = Filters[FilterToUse][0]
               upper = Filters[FilterToUse][1]
               mask = cv2.inRange(hsv, lower, upper)
               bbox = detect(mask)
-              if None == bbox:
-                  bbox = (0,0,10,10)
+              
       else: retryCount = 0
+      
+      # Or, if we have a big change in x/y we track it and change if always bouncing
+      if (None == bbox or
+          abs(bbox[0]-oldX) > JumpThreshold or
+          abs(bbox[1]-oldY) > JumpThreshold): JumpCount +=2
+      else: JumpCount -= 1
+      if (JumpCount >= JumpLimit):
+        JumpCount = 0
+        FilterToUse += 1
+        if (FilterEntries <= FilterToUse): FilterToUse = 0
+        lower = Filters[FilterToUse][0]
+        upper = Filters[FilterToUse][1]
+        mask = cv2.inRange(hsv, lower, upper)
+        bbox = detect(mask)
+      if None == bbox:
+          bbox = (0,0,10,10)
       
       ok = tracker.init(img, bbox)
       lastArea = area+1
+      cv2.imshow('mask',mask)
     
     ''' React to tracking
     
@@ -184,6 +224,13 @@ def track():
     '''
     ok, bbox = tracker.update(img)
     x,y,w,h = bbox
+    oldX = x
+    oldY = y
+    
+    # A 'no find' is treated as a jump, each time!
+    if (0 == x and x == y and 10 == w and w == h):
+      w = 0
+      h = 0
     pdata = {'x': x, 'y': y, 'w': w, 'h': h}
     netSock.sendto(json.dumps(pdata),(IPADDR,PORTNUM))
     
