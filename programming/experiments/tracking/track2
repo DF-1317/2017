@@ -128,7 +128,9 @@ def track():
       # cap = cv2.VideoCapture(1) # USB camera
       cap = cv2.VideoCapture('http://10.13.17.12/mjpg/video.mjpg') # IP camera
       ok, img = cap.read()  # try a read
-      if (not ok): cap = None
+      if (not ok):
+        cap = None
+	time.sleep(0.5)
       
   loops = DetectFrameRate
   tracker = None
@@ -250,8 +252,6 @@ def track():
       break
   cap.release()
   cv2.destroyAllWindows()
-  #msg = json.dumps(pdata)
-  #netSock.sendto(msg,(IPADDR,PORTNUM))
 
 if __name__ == '__main__' :
   track()

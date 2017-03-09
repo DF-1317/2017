@@ -16,6 +16,7 @@ Description=Video Tracking Process for DF1317
 After=network.target
 
 [Service]
+ExecStartPre=ifconfig wlo1 down
 ExecStart=/home/pi/2017/tracker 2>&1 >/home/pi/2017/logs/tracker.log
 Restart=on-abort
 
