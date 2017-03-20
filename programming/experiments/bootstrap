@@ -1,0 +1,84 @@
+#!/bin/bash
+
+Share=$HOME/share
+Root=$HOME/root
+
+mkdir -p $Share
+mkdir -p $Root
+
+echo "deb http://www.deb-multimedia.org jessie main non-free" >> /etc/apt/sources.list.d/multimedia.list
+echo "deb-src http://www.deb-multimedia.org jessie main non-free" >> /etc/apt/sources.list.d/multimedia.list
+
+apt-get update
+apt-get upgrade
+
+apt-get -y --force-yes install deb-multimedia-keyring || exit 1
+apt-get upgrade
+
+apt-get -y --force-yes install build-essential cmake pkg-config || exit 1
+apt-get -y --force-yes install htop || exit 1
+apt-get -y --force-yes install libjpeg-dev libtiff5-dev libjasper-dev libpng12-dev || exit 1
+apt-get -y --force-yes install libavcodec-dev libavformat-dev libswscale-dev || exit 1
+apt-get -y --force-yes install libv4l-dev libmp3lame-dev libvorbis-dev || exit 1
+apt-get -y --force-yes install libtheora-dev libspeex-dev yasm libfaac-dev || exit 1
+apt-get -y --force-yes install libxvidcore-dev libx264-dev libopenjpeg-dev || exit 1
+apt-get -y --force-yes install libgtk2.0-dev || exit 1
+apt-get -y --force-yes install libatlas-base-dev gfortran || exit 1
+apt-get -y --force-yes install python2.7-dev python3-dev || exit 1
+
+wget https://bootstrap.pypa.io/get-pip.py || exit 1
+python ./get-pip.py || exit 1
+rm get-pip.py || exit 1
+
+pip install numpy imutils || exit 1
+
+# FFMPEG
+cd $Share
+wget http://ffmpeg.org/releases/ffmpeg-2.7.2.tar.bz2
+tar -xf ffmpeg*bz2
+cd ffmpeg-2.7.2
+cat >b <<-EOF
+./configure --prefix=$Root \
+    --enable-gpl --enable-postproc \
+    --enable-swscale --enable-avfilter --enable-libmp3lame \
+    --enable-libvorbis --enable-libtheora --enable-libx264 \
+    --enable-libspeex --enable-shared --enable-pthreads \
+    --enable-libopenjpeg --enable-libfaac --enable-nonfree
+EOF
+chmod +x b
+./b || exit 1
+make -j3
+make install
+
+# OpenCV
+cd $Share
+wget -O opencv.tar.gz https://github.com/opencv/opencv/archive/3.2.0.tar.gz || exit 1
+wget -O opencv-contrib.tar.gz https://github.com/opencv/opencv_contrib/archive/3.2.0.tar.gz || exit 1
+tar -xf opencv.tar.gz || exit 1
+tar -xf opencv-contrib.tar.gz
+get conrtib here
+cd opencv-3.2.0
+cat >b <<-EOF
+#!/bin/bash
+
+cmake \
+  -D CMAKE_BUILD_TYPE=RELEASE \
+  -D CMAKE_INSTALL_PREFIX=$Root \
+  -D BUILD_NEW_PYTHON_SUPPORT=ON \
+  -D INSTALL_PYTHON_EXAMPLES=ON \
+  -D WITH_TBB=ON \
+  -D OPENCV_EXTRA_MODULES_PATH=$Share/opencv_contrib-3.2.0/modules \
+  -D BUILD_EXAMPLES=ON \
+  ..
+EOF
+chmod +x b
+rm -rf build
+mkdir build
+cd build
+../b || exit 1
+make -j3
+make install
+
+#####
+echo "Done!"
+

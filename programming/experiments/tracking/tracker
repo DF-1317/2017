@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -a
+PKG_CONFIG_PATH=/home/pi/root/lib/pkgconfig:$PKG_CONFIG_PATH
+PYTHONPATH=/home/pi/root/lib/python2.7/dist-packages:$PYTHONPATH
+LD_LIBRARY_PATH=$HOME/root/usr/local/lib:$LD_LIBRARY_PATH
+LD_LIBRARY_PATH=$HOME/root/lib:$LD_LIBRARY_PATH
+PATH=$HOME/root/bin:$PATH
+PATH=$HOME/root/usr/bin:$PATH
+PATH=$HOME/root/usr/local/bin:$PATH
+PATH=$HOME/bin:$PATH
+
+/home/pi/2017/track2

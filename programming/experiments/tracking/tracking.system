@@ -1,0 +1,24 @@
+#
+# This file us used to start the tracking program as a Linux service
+# under control of the systemd process. When the system is powered on
+# and booted, this should start automatically. It will also be restarted
+# if it should fail for any reason.
+# The command line tool, systemctl, is used to start/stop/status the service.
+# After this file is placed into: /etc/systemd/system/
+# you should do:
+#   bash$ sudo systemctl daemon-reload
+#   bash$ sudo systemctl enable tracker
+# and if you want to start it now:  bash$ sudo systemctl start tracker
+#
+
+[Unit]
+Description=Video Tracking Process for DF1317
+After=network.target
+
+[Service]
+ExecStartPre=ifconfig wlo1 down
+ExecStart=/home/pi/2017/tracker 2>&1 >/home/pi/2017/logs/tracker.log
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
