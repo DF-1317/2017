@@ -451,9 +451,9 @@ public class MecanumDriveTrain implements RobotComponent {
 		}
 		else if(AutoStep ==1)
 		{
-			if(MoveTimer.get()<=1.2)
+			if(MoveTimer.get()<=2.49)
 			{
-				drive(0, -0.6, 0);
+				drive(0, -0.3, 0);
 			}
 			else
 			{

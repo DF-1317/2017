@@ -7,10 +7,6 @@ import com.fasterxml.jackson.jr.ob.JSON;
 import com.fasterxml.jackson.jr.ob.JSONObjectException;
 
 class PacketReader {
-	class Coord {
-		double x;
-		double y;
-	}
 	
 	DatagramSocket serverSocket;
 	byte[] rData;

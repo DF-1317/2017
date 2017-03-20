@@ -23,7 +23,7 @@ public class RobotPorts {
 	public static int MoveJoystickPort = 2;
 	public static int OtherJoystickPort = 0;
 	
-	public static int DoorSwitch = 9;
+	public static int DoorSwitch = 0;
 	
 	
 

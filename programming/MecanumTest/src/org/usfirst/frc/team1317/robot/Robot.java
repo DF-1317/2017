@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class Robot extends IterativeRobot {
 	final String crossingAuto = "Crossing Baseline";
-	final String defaultAuto = "Center";
+	final String centerAuto = "Center";
 	final String leftAuto = "Left";
 	final String rightAuto = "Right";
 	String autoSelected;
@@ -66,10 +66,10 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		// some default code for autonomous selection
-		chooser.addDefault("Center", defaultAuto);
+		chooser.addObject("Center", centerAuto);
 		chooser.addObject("Left", leftAuto);
 		chooser.addObject("Right", rightAuto);
-		chooser.addObject("Cross the Baseline", crossingAuto);
+		chooser.addDefault("Cross the Baseline", crossingAuto);
 		SmartDashboard.putData("Auto choices", chooser);
 		
 		LoadingStationChooser.addDefault("Auto", AutoLoadingStation);
@@ -94,10 +94,9 @@ public class Robot extends IterativeRobot {
 		// initializes the gear Mechanism, with what joystick to use.
 		// change this based on which robot we are deploying code to.
 		gearMechanism = new GearMechanismDoubleSolenoid(OtherJoystick);
-		AutoStep = 0;
+		AutoStep = -4;
 		turner = new PIDTurning(driveTrain, ahrs);
 		driveForward = new PIDDriveDistance(driveTrain, ahrs);
-		SmartDashboard.putNumber("Number of Solenoids", PortsJNI.getNumSolenoidChannels());
 		AutoTimer = new Timer();
 		packetReader = new PacketReader();
 		targeter = new Targeting(driveTrain);
@@ -116,8 +115,7 @@ public class Robot extends IterativeRobot {
 	 * SendableChooser make sure to add them to the chooser code above as well.
 	 */
 	@Override
-	public void autonomousInit() { // all of the code in this function was
-									// automatically added
+	public void autonomousInit() {
 		autoSelected = chooser.getSelected();
 		loadingStationSelected = LoadingStationChooser.getSelected();
 		VisionTracking = VisionTrackingChooser.getSelected();
@@ -145,15 +143,7 @@ public class Robot extends IterativeRobot {
 		AutoTimer.reset();
 		AutoTimer.start();
 		turner.reset();
-		/*if(autoSelected == rightAuto)
-		{
-			AutoStep = 0;
-		}
-		else
-		{
-			AutoStep = 7;
-		}*/
-		AutoStep =0;
+		AutoStep =-4;
 	}
 
 	/**
@@ -164,7 +154,7 @@ public class Robot extends IterativeRobot {
 		Boolean next = false;
 		if(autoSelected == crossingAuto)
 		{
-			if (AutoTimer.get() < 3) {
+			if (AutoTimer.get() < 2) {
 				driveTrain.drive(0, -0.6, 0);
 			}
 			else
@@ -174,14 +164,14 @@ public class Robot extends IterativeRobot {
 		}
 		else
 		{
-			if (AutoStep == -2) {
+			if (AutoStep == -4) {
 				driveTrain.resetDistance();
 				next = true;
 				driveTrain.ResetLineUpSteps();
 				AutoTimer.reset();
 				AutoTimer.start();
 			}
-			else if (AutoStep == -1)
+			else if (AutoStep == -3)
 			{
 				if(autoSelected==rightAuto||autoSelected == leftAuto)
 				{
@@ -203,7 +193,7 @@ public class Robot extends IterativeRobot {
 					next = true;
 				}
 			}
-			else if (AutoStep == 0)
+			else if (AutoStep == -2)
 			{
 				if(VisionTracking)
 				{
@@ -220,21 +210,19 @@ public class Robot extends IterativeRobot {
 						next = true;
 					}
 				}
+				else
+				{
+					next = true;
+				}
 			}
-			else if (AutoStep == 1) {
+			else if (AutoStep == -1) {
 				if(VisionTracking)
 				{
 					next = alignWithPeg();
-					if(next)
-					{
-						driveTrain.drive(0, 0, 0);
-						AutoTimer.reset();
-						AutoTimer.start();
-					}
 				}
 				else
 				{
-					if(autoSelected==defaultAuto)
+					if(autoSelected==centerAuto)
 					{
 						next = driveTrain.lineUpWithCenterPeg();
 					}
@@ -274,30 +262,58 @@ public class Robot extends IterativeRobot {
 						}
 					}
 				}
-			}	
-			else if (AutoStep == 2) {
-				gearMechanism.openDoor();
-				next = true;
+				if(next)
+				{
+					driveTrain.drive(0, 0, 0);
+					AutoTimer.reset();
+					AutoTimer.start();
+				}
 			}
-			else if (AutoStep == 3) {
+			else if (AutoStep == 0) {
+				if(AutoTimer.get()>0.5)
+				{
+					gearMechanism.openDoor();
+					AutoTimer.reset();
+					AutoTimer.start();
+					next = true;
+				}
+			}
+			else if (AutoStep == 1)
+			{
+				if(AutoTimer.get()>0.5)
+				{
+					next = true;
+				}
+				else
+				{
+					driveTrain.drive(0.0, 0.0, 0.0);
+				}
+			}
+			else if (AutoStep == 2) {
 				next = gearMechanism.trypushGear();
+				next = gearMechanism.trypushGear();
+				if(next)
+				{
+					AutoTimer.reset();
+					AutoTimer.start();
+				}
+			}
+			else if (AutoStep == 3)
+			{
+				if(AutoTimer.get()>1.2)
+				{
+					next = true;
+				}
 			}
 			else if (AutoStep == 4) {
-				gearMechanism.retractGearPiston();
-				next = true;
-			}
-			else if (AutoStep == 5) {
-				next = gearMechanism.tryCloseDoor();
-			}
-			else if (AutoStep == 6) {
 				AutoTimer.reset();
 				AutoTimer.start();
 				next = true;
 			}
-			else if (AutoStep == 7)
+			else if (AutoStep == 5)
 			{
-				driveTrain.drive(0, 0.5, 0);
-				if (AutoTimer.get()>0.4)
+				driveTrain.drive(0, 0.2, 0);
+				if (AutoTimer.get()>0.9)
 				{
 					next = true;
 					driveTrain.drive(0, 0, 0);
@@ -305,7 +321,19 @@ public class Robot extends IterativeRobot {
 					AutoTimer.start();
 				}
 			}
-			if (autoSelected == rightAuto && LoadingStation == "Right")
+			else if (AutoStep == 6) {
+				gearMechanism.retractGearPiston();
+				next = true;
+				AutoTimer.reset();
+				AutoTimer.start();
+			}
+			else if (AutoStep == 7) {
+				if(AutoTimer.get()>0.5)
+				{
+					next = gearMechanism.tryCloseDoor();
+				}
+			}
+			/*if (autoSelected == rightAuto && LoadingStation == "Right")
 			{
 				if (AutoStep ==8)
 				{
@@ -379,7 +407,7 @@ public class Robot extends IterativeRobot {
 					}
 				}
 			}
-			else if(autoSelected == defaultAuto)
+			else if(autoSelected == centerAuto)
 			{
 				if(AutoStep == 8)
 				{
@@ -389,7 +417,7 @@ public class Robot extends IterativeRobot {
 				}
 				else if(AutoStep == 9)
 				{
-					if(AutoTimer.get()>1.4)
+					if(AutoTimer.get()>1.7)
 					{
 						next = true;
 						driveTrain.drive(0, 0, 0);
@@ -591,9 +619,11 @@ public class Robot extends IterativeRobot {
 					}
 				}
 			}
+			*/
 			if (next)
 				AutoStep++;
 		}
+			
 		driveTrain.AutoUpdate();
 		gearMechanism.AutoUpdate();
 		climber.AutoUpdate();

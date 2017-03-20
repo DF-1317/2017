@@ -5,10 +5,10 @@ import java.util.*;
 
 public class Targeting {
 	
-	final int TargetX =  500;
+	final int TargetX =  500; //still need to measure
 	final int TargetXError = 3;
 	final double DistanceError = 0.03;
-	final int WidthAtTarget = 500;
+	final int WidthAtTarget = 500; //still need to measure
 	final int WidthAtFarthestPoint = 20;
 	final int FarthestPointInches = 122;
 	final double ForwardSpeed = -0.75;
@@ -82,6 +82,7 @@ public class Targeting {
 					driveTrain.drive(-0.4, 0, 0);
 					
 				}
+				CenterCounter++;
 			}
 			return false;
 		}
@@ -89,7 +90,7 @@ public class Targeting {
 		{
 			int xNow = (int)currentBoundingBox.get("x") + (int)currentBoundingBox.get("w")/2;
 			double distance = estimateDistancetoTarget();
-			if (Math.abs(distance)>DistanceError&&distance>0)
+			if (distance>DistanceError)
 			{
 				if(distance<6)
 				{

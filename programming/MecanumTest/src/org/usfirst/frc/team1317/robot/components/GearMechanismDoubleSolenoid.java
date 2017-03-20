@@ -182,7 +182,7 @@ public class GearMechanismDoubleSolenoid implements GearMechanism {
 	public Boolean trypushGear()
 	{
 		//push the piston out if the door is open.
-		if (DoorOpener.get()==DoubleSolenoid.Value.kForward){
+		if (DoorOpener.get()==DoubleSolenoid.Value.kForward&&DoorLimitSwitch.get()){
 			GearPusher.set(DoubleSolenoid.Value.kForward);
 			PistonOut = true;
 			return true;
