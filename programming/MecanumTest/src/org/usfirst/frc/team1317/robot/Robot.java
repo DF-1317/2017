@@ -4,6 +4,10 @@ import edu.wpi.first.wpilibj.hal.PortsJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.Scheduler;
+
+import org.usfirst.frc.team1317.robot.commands.*;
 import org.usfirst.frc.team1317.robot.components.*;
 import com.kauailabs.navx.frc.*;
 import java.util.Map;
@@ -35,6 +39,7 @@ public class Robot extends IterativeRobot {
 	boolean VisionTracking;
 	SendableChooser<Boolean> VisionTrackingChooser = new SendableChooser<>();
 	
+	boolean AutoCommandMode = true;
 	
 	int AutoStep;
 
@@ -58,6 +63,8 @@ public class Robot extends IterativeRobot {
 	Targeting targeter;
 	
 	DriverStation driverStation;
+	
+	Command AutonomousCommand;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -134,12 +141,39 @@ public class Robot extends IterativeRobot {
 		{
 			LoadingStation = loadingStationSelected;
 		}
-		// autoSelected = SmartDashboard.getString("Auto Selector",
-		// defaultAuto);
 		System.out.println("Auto selected: " + autoSelected);
+		if(AutoCommandMode)
+		{
+			autonomousInitCommand();
+		}
+		else
+		{
+			autonomousInitSteps();
+		}
 		driveTrain.AutoStart();
 		gearMechanism.AutoStart();
 		climber.AutoStart();
+	}
+	
+	private void autonomousInitCommand() {
+		if(VisionTracking)
+		{
+			if(autoSelected == centerAuto)
+			{
+				AutonomousCommand = new VisionTrackingAutonomousCenter(this,driveTrain,gearMechanism);
+			}
+		}
+		else
+		{
+			if(autoSelected == centerAuto)
+			{
+				AutonomousCommand = new TimerAutonomousCenter(driveTrain, gearMechanism);
+			}
+		}
+		AutonomousCommand.start();
+	}
+	
+	private void autonomousInitSteps() {
 		AutoTimer.reset();
 		AutoTimer.start();
 		turner.reset();
@@ -151,6 +185,23 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		if(AutoCommandMode)
+		{
+			autonomousPeriodicCommand();
+		}
+		else
+		{
+			autonomousPeriodicStep();
+		}
+		driveTrain.AutoUpdate();
+		gearMechanism.AutoUpdate();
+		climber.AutoUpdate();
+	}
+	
+	private void autonomousPeriodicCommand() {
+		Scheduler.getInstance().run();
+	}
+	private void autonomousPeriodicStep(){
 		Boolean next = false;
 		if(autoSelected == crossingAuto)
 		{
@@ -623,10 +674,6 @@ public class Robot extends IterativeRobot {
 			if (next)
 				AutoStep++;
 		}
-			
-		driveTrain.AutoUpdate();
-		gearMechanism.AutoUpdate();
-		climber.AutoUpdate();
 	}
 
 	/**
