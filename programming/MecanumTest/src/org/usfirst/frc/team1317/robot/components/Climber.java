@@ -45,7 +45,7 @@ public class Climber implements RobotComponent {
 		// TODO Auto-generated method stub
 		// controls the motor using the 'OtherJoystick'
 		double throttle = -OtherJoystick.getThrottle();
-		double speedMultiplier = 0.45*throttle+0.55;
+		double speedMultiplier = 1; //0.45*throttle+0.55; 
 		double forward = speedMultiplier * OtherJoystick.getY();
 		CMotor.set(forward);
 		if (CMotor.getOutputCurrent()>40)
