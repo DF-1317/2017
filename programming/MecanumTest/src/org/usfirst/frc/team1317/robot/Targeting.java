@@ -57,21 +57,21 @@ public class Targeting {
 		{
 			if(liftNumber == LeftLift)
 			{
-				driveTrain.drive(-0.3, 0, 0);
+				driveTrain.drive(-0.3, -0.2, 0);
 			}
 			else if (liftNumber == RightLift)
 			{
-				driveTrain.drive(0.3, 0, 0);
+				driveTrain.drive(0.3, -0.2, 0);
 			}
 			else if (liftNumber == CenterLift)
 			{
 				if(CenterCounter>150)
 				{
-					driveTrain.drive(0.4, 0, 0);
+					driveTrain.drive(0.3, 0, 0);
 				}
 				else if (CenterCounter>450)
 				{
-					driveTrain.drive(-0.4, 0, 0);
+					driveTrain.drive(-0.3, 0, 0);
 				}
 				else if (CenterCounter>600)
 				{
@@ -79,7 +79,7 @@ public class Targeting {
 				}
 				else
 				{
-					driveTrain.drive(-0.4, 0, 0);
+					driveTrain.drive(-0.3, 0, 0);
 					
 				}
 				CenterCounter++;

@@ -10,7 +10,7 @@ public class DriveForward extends Command {
 	double Speed = 0;
 	Timer timer = new Timer();
 	MecanumDriveTrain driving;
-	DriveForward(double time, double speed, MecanumDriveTrain driveTrain)
+	public DriveForward(double time, double speed, MecanumDriveTrain driveTrain)
 	{
 		TargetTime = time;
 		Speed = speed;

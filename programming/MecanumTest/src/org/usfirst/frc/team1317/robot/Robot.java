@@ -156,12 +156,27 @@ public class Robot extends IterativeRobot {
 	}
 	
 	private void autonomousInitCommand() {
-		if(VisionTracking)
+		//if the crossing auto is selected
+		if(autoSelected == crossingAuto)
+		{
+			//drive forward at 60% speed for 2 seconds
+			AutonomousCommand = new DriveForward(2.0,-0.6,driveTrain);
+		}
+		else if(VisionTracking)
 		{
 			if(autoSelected == centerAuto)
 			{
-				AutonomousCommand = new VisionTrackingAutonomousCenter(this,driveTrain,gearMechanism);
+				targeter.setLiftTarget(targeter.CenterLift);
 			}
+			else if(autoSelected == leftAuto)
+			{
+				targeter.setLiftTarget(targeter.RightLift);
+			}
+			else if(autoSelected == rightAuto)
+			{
+				targeter.setLiftTarget(targeter.LeftLift);
+			}
+			AutonomousCommand = new VisionTrackingAutonomousCenter(this,driveTrain,gearMechanism);
 		}
 		else
 		{
@@ -170,7 +185,13 @@ public class Robot extends IterativeRobot {
 				AutonomousCommand = new TimerAutonomousCenter(driveTrain, gearMechanism);
 			}
 		}
-		AutonomousCommand.start();
+		if(AutonomousCommand != null)
+			AutonomousCommand.start();
+		else
+		{
+			AutoCommandMode=false;
+			autonomousInitSteps();
+		}
 	}
 	
 	private void autonomousInitSteps() {
@@ -758,6 +779,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Auto choices", chooser);
 		SmartDashboard.putData("Loading Station",LoadingStationChooser);
 		SmartDashboard.putData("Vision Tracking",VisionTrackingChooser);
+		packetReader.getPacket();
 		
 	}
 	
