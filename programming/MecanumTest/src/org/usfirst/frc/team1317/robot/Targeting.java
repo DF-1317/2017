@@ -5,15 +5,15 @@ import java.util.*;
 
 public class Targeting {
 	
-	final int TargetX =  500; //still need to measure
+	final int TargetX =  137; //still need to measure
 	final int TargetXError = 3;
 	final double DistanceError = 0.03;
-	final int WidthAtTarget = 500; //still need to measure
+	final int WidthAtTarget = 171; //still need to measure
 	final int WidthAtFarthestPoint = 20;
 	final int FarthestPointInches = 122;
-	final double ForwardSpeed = -0.75;
-	final double ForwardSpeed2 = -0.5;
-	final double ForwardSpeed3 = -0.3;
+	final double ForwardSpeed = -0.2;
+	final double ForwardSpeed2 = -0.15;
+	final double ForwardSpeed3 = -0.1;
 	final double SlidingSpeed = 1.0;
 	final double TurningSpeed = 0.5;
 	
@@ -38,7 +38,7 @@ public class Targeting {
 	{
 		if(boundingBox != null)
 		{
-			if((int)boundingBox.get("x")==0&&(int)boundingBox.get("y")==0 && (int)boundingBox.get("w")==0)
+			if((double)boundingBox.get("x")==0.0&&(double)boundingBox.get("y")==0.0 && (double)boundingBox.get("w")==0.0)
 			{
 				return;
 			}
@@ -88,15 +88,15 @@ public class Targeting {
 		}
 		else
 		{
-			int xNow = (int)currentBoundingBox.get("x") + (int)currentBoundingBox.get("w")/2;
+			double xNow = (double)currentBoundingBox.get("x") + (double)currentBoundingBox.get("w")/2.0;
 			double distance = estimateDistancetoTarget();
 			if (distance>DistanceError)
 			{
-				if(distance<6)
+				if(distance<6.0)
 				{
 					forward = ForwardSpeed3;
 				}
-				if(distance<14)
+				if(distance<14.0)
 				{
 					forward = ForwardSpeed2;
 				}
@@ -137,7 +137,7 @@ public class Targeting {
 	
 	public double estimateDistancetoTarget()
 	{
-		return (WidthAtTarget-(int)currentBoundingBox.get("w"))/(WidthAtTarget-WidthAtFarthestPoint)*FarthestPointInches;
+		return (WidthAtTarget-(double)currentBoundingBox.get("w"))/(WidthAtTarget-WidthAtFarthestPoint)*FarthestPointInches;
 	}
 	
 	public void setLiftTarget(byte target)

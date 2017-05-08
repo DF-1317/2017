@@ -24,6 +24,7 @@ public class Robot extends IterativeRobot {
 	final String centerAuto = "Center";
 	final String leftAuto = "Left";
 	final String rightAuto = "Right";
+	final double trackerPeriod = 1.0;
 	String autoSelected;
 	SendableChooser<String> chooser = new SendableChooser<>();
 	
@@ -58,6 +59,9 @@ public class Robot extends IterativeRobot {
 	PIDTurning turner;
 
 	Timer AutoTimer;
+	Timer TrackingTimer;
+	
+	boolean lastAlignment=false;
 
 	PacketReader packetReader;
 	Targeting targeter;
@@ -108,6 +112,7 @@ public class Robot extends IterativeRobot {
 		packetReader = new PacketReader();
 		targeter = new Targeting(driveTrain);
 		driverStation = DriverStation.getInstance();
+		TrackingTimer = new Timer();
 	}
 
 	/**
@@ -192,6 +197,8 @@ public class Robot extends IterativeRobot {
 			AutoCommandMode=false;
 			autonomousInitSteps();
 		}
+		TrackingTimer.reset();
+		TrackingTimer.start();
 	}
 	
 	private void autonomousInitSteps() {
@@ -779,15 +786,21 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Auto choices", chooser);
 		SmartDashboard.putData("Loading Station",LoadingStationChooser);
 		SmartDashboard.putData("Vision Tracking",VisionTrackingChooser);
-		packetReader.getPacket();
+		//packetReader.getPacket();
 		
 	}
 	
 	public boolean alignWithPeg()
 	{
+		if(TrackingTimer.get()>=trackerPeriod)
+		{
 		Map<String,Object> boundingBox = packetReader.getPacket();
 		targeter.setCurrentBoundingBox(boundingBox);
-		return targeter.adjustCourse();
+		TrackingTimer.reset();
+		TrackingTimer.start();
+		lastAlignment = targeter.adjustCourse();
+		}
+		return lastAlignment;
 	}
 
 }

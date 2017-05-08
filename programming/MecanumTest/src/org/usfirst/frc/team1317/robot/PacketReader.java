@@ -45,7 +45,7 @@ class PacketReader {
 				c = JSON.std.mapFrom(msg);
 				System.out.println(c);
 			}
-			catch (SocketTimeoutException e){}
+			catch (SocketTimeoutException e){/*System.out.println("Did not receive packet within time period");*/}
 			catch (JSONObjectException e)
 			{
 				e.printStackTrace();
@@ -54,7 +54,7 @@ class PacketReader {
 			{
 				e.printStackTrace();
 			}
-			
+
 			return c;
 		}
 		else return null;
