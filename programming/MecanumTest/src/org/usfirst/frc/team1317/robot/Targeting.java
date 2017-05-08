@@ -5,10 +5,10 @@ import java.util.*;
 
 public class Targeting {
 	
-	final int TargetX =  137; //still need to measure
+	final int TargetX =  137; 
 	final int TargetXError = 3;
 	final double DistanceError = 0.03;
-	final int WidthAtTarget = 171; //still need to measure
+	final int WidthAtTarget = 171;
 	final int WidthAtFarthestPoint = 20;
 	final int FarthestPointInches = 122;
 	final double ForwardSpeed = -0.2;
