@@ -5,17 +5,18 @@ import java.util.*;
 
 public class Targeting {
 	
-	final int TargetX =  137; 
-	final int TargetXError = 3;
+	final double TargetX = 137.5; 
+	final int TargetXError = 5;
 	final double DistanceError = 0.03;
-	final int WidthAtTarget = 171;
-	final int WidthAtFarthestPoint = 20;
-	final int FarthestPointInches = 122;
+	final int WidthAtTarget = 187;
+	final int WidthAtFarthestPoint = 50;
+	final int FarthestPointInches = 104;
 	final double ForwardSpeed = -0.2;
 	final double ForwardSpeed2 = -0.15;
 	final double ForwardSpeed3 = -0.1;
-	final double SlidingSpeed = 1.0;
+	final double SlidingSpeed = 0.4;
 	final double TurningSpeed = 0.5;
+	final double TurningCorrectionSpeed = 0.1;
 	
 	
 	private byte liftNumber;
@@ -55,6 +56,7 @@ public class Targeting {
 		Boolean DoneMovingForward=false;
 		if (currentBoundingBox == null)
 		{
+			System.out.println("Searching for Target...");
 			if(liftNumber == LeftLift)
 			{
 				driveTrain.drive(-0.3, -0.2, 0);
@@ -65,22 +67,21 @@ public class Targeting {
 			}
 			else if (liftNumber == CenterLift)
 			{
-				if(CenterCounter>150)
-				{
-					driveTrain.drive(0.3, 0, 0);
-				}
-				else if (CenterCounter>450)
-				{
-					driveTrain.drive(-0.3, 0, 0);
-				}
-				else if (CenterCounter>600)
+				if(CenterCounter>600)
 				{
 					CenterCounter=0;
 				}
+				else if (CenterCounter>450)
+				{
+					driveTrain.drive(-0.2, 0, 0);
+				}
+				else if(CenterCounter>150)
+				{
+					driveTrain.drive(0.2, 0, 0);
+				}
 				else
 				{
-					driveTrain.drive(-0.3, 0, 0);
-					
+					driveTrain.drive(-0.2, 0, 0);
 				}
 				CenterCounter++;
 			}
@@ -118,10 +119,12 @@ public class Targeting {
 			else if (xNow<TargetX)
 			{
 				sliding = SlidingSpeed;
+				turning = -TurningCorrectionSpeed;
 			}
 			else if (xNow>TargetX)
 			{
 				sliding = -SlidingSpeed;
+				turning = TurningCorrectionSpeed;
 			}
 			driveTrain.drive(sliding, forward, turning);
 			if(DoneAligningX&&DoneMovingForward)

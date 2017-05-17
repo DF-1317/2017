@@ -24,7 +24,7 @@ public class Robot extends IterativeRobot {
 	final String centerAuto = "Center";
 	final String leftAuto = "Left";
 	final String rightAuto = "Right";
-	final double trackerPeriod = 1.0;
+	final double trackerPeriod = 0.0;
 	String autoSelected;
 	SendableChooser<String> chooser = new SendableChooser<>();
 	
@@ -175,11 +175,11 @@ public class Robot extends IterativeRobot {
 			}
 			else if(autoSelected == leftAuto)
 			{
-				targeter.setLiftTarget(targeter.RightLift);
+				targeter.setLiftTarget(targeter.LeftLift);
 			}
 			else if(autoSelected == rightAuto)
 			{
-				targeter.setLiftTarget(targeter.LeftLift);
+				targeter.setLiftTarget(targeter.RightLift);
 			}
 			AutonomousCommand = new VisionTrackingAutonomousCenter(this,driveTrain,gearMechanism);
 		}
@@ -786,7 +786,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Auto choices", chooser);
 		SmartDashboard.putData("Loading Station",LoadingStationChooser);
 		SmartDashboard.putData("Vision Tracking",VisionTrackingChooser);
-		//packetReader.getPacket();
+		packetReader.getPacket();
 		
 	}
 	

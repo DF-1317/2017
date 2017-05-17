@@ -9,6 +9,7 @@ public class VisionTrackingAutonomousCenter extends CommandGroup {
 	public VisionTrackingAutonomousCenter(Robot robot, MecanumDriveTrain drivetrain, GearMechanism gearMechanism)
 	{
 		addSequential(new AlignWithPeg(robot));
+		addSequential(new Wait(0.5));
 		addSequential(new DeployGear(drivetrain,gearMechanism));
 	}
 
