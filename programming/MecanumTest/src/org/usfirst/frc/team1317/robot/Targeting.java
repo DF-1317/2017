@@ -5,6 +5,8 @@ import java.util.*;
 
 public class Targeting {
 	
+	private int Details = 5;
+	
 	final double TargetX = 137.5; 
 	final int TargetXError = 5;
 	final double DistanceError = 0.03;
@@ -29,6 +31,11 @@ public class Targeting {
 	
 	MecanumDriveTrain driveTrain;
 	Map<String,Object> currentBoundingBox;
+	
+	private void _showDetails(int level, String msg) {
+		if (Details < level) return;
+		System.out.println(msg);
+	}
 
 	public Targeting(MecanumDriveTrain driving)
 	{
@@ -91,6 +98,7 @@ public class Targeting {
 		{
 			double xNow = (double)currentBoundingBox.get("x") + (double)currentBoundingBox.get("w")/2.0;
 			double distance = estimateDistancetoTarget();
+			_showDetails(3, "xnow: "+xNow + ", distance: " + distance);
 			if (distance>DistanceError)
 			{
 				if(distance<6.0)
@@ -126,7 +134,9 @@ public class Targeting {
 				sliding = -SlidingSpeed;
 				turning = TurningCorrectionSpeed;
 			}
+			_showDetails(3, "sliding: " + sliding + ", forward: " + "turning: " + turning);
 			driveTrain.drive(sliding, forward, turning);
+			_showDetails(4, "Aligned: " + DoneAligningX + ", Forward: " + DoneMovingForward);
 			if(DoneAligningX&&DoneMovingForward)
 			{
 				return true;

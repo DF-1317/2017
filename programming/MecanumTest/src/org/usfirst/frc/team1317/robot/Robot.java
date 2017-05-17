@@ -794,11 +794,11 @@ public class Robot extends IterativeRobot {
 	{
 		if(TrackingTimer.get()>=trackerPeriod)
 		{
-		Map<String,Object> boundingBox = packetReader.getPacket();
-		targeter.setCurrentBoundingBox(boundingBox);
-		TrackingTimer.reset();
-		TrackingTimer.start();
-		lastAlignment = targeter.adjustCourse();
+			Map<String,Object> boundingBox = packetReader.getPacket();
+			targeter.setCurrentBoundingBox(boundingBox);
+			TrackingTimer.reset();
+			TrackingTimer.start();
+			lastAlignment = targeter.adjustCourse();
 		}
 		return lastAlignment;
 	}
