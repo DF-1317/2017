@@ -13,7 +13,9 @@ public class ExtendPiston extends Command {
 	boolean StartedtoPush=false;
 	ExtendPiston(GearMechanism gearmechanism)
 	{
+		super("ExtendPiston");
 		gearMechanism = gearmechanism;
+		setInterruptible(true);
 	}
 	
 	@Override
@@ -33,5 +35,4 @@ public class ExtendPiston extends Command {
 	protected boolean isFinished() {
 		return StartedtoPush;
 	}
-
 }

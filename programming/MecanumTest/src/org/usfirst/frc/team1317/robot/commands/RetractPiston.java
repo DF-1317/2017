@@ -13,7 +13,9 @@ public class RetractPiston extends Command {
 	boolean StartedtoPush=false;
 	RetractPiston(GearMechanism gearmechanism)
 	{
+		super("RetractPiston");
 		gearMechanism = gearmechanism;
+		setInterruptible(true);
 	}
 	
 	@Override

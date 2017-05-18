@@ -17,7 +17,7 @@ public class DeployGear extends CommandGroup {
 		addSequential( new RetractPiston(gearMechanism));
 		addSequential( new Wait (0.5));
 		addSequential( new CloseDoor(gearMechanism));
-		
+		setInterruptible(true);	
 	}
 
 }

@@ -13,7 +13,9 @@ public class CloseDoor extends Command {
 	boolean DoorStartedtoClose=false;
 	CloseDoor(GearMechanism gearmechanism)
 	{
+		super("CloseDoor");
 		gearMechanism = gearmechanism;
+		setInterruptible(true);
 	}
 	
 	@Override

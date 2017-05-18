@@ -11,7 +11,9 @@ public class OpenDoor extends Command {
 	Timer timer = new Timer();
 	OpenDoor(GearMechanism gearmechanism)
 	{
+		super("OpenDoor");
 		gearMechanism = gearmechanism;
+		setInterruptible(true);
 	}
 	
 	@Override

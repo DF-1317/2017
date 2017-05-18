@@ -10,6 +10,7 @@ public class Wait extends Command {
 	
 	Wait(double time)
 	{
+		super("Wait");
 		TimeToWait = time;
 	}
 	

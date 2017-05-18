@@ -9,6 +9,7 @@ public class AlignWithPeg extends Command {
 	boolean isAligned = false;
 	AlignWithPeg(Robot robot)
 	{
+		super("AlignWithPeg");
 		Targeter = robot;
 	}
 	
@@ -17,6 +18,8 @@ public class AlignWithPeg extends Command {
 	{
 		isAligned = false;
 	}
+	
+	@Override
 	protected void execute()
 	{
 		isAligned = Targeter.alignWithPeg();

@@ -11,9 +11,11 @@ public class TurnDegrees extends Command {
 	boolean done = false;
 	public TurnDegrees(PIDTurning turning, double degrees, double speed)
 	{
+		super("TurnDegrees");
 		turner=turning;
 		this.degrees = degrees;
 		this.speed = speed;
+		setInterruptible(true);
 	}
 	@Override
 	protected void initialize()
@@ -31,6 +33,12 @@ public class TurnDegrees extends Command {
 	@Override
 	protected boolean isFinished() {
 		return done;
+	}
+	
+	@Override
+	protected void end()
+	{
+		turner.stop();
 	}
 
 }

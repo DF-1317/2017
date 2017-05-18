@@ -12,9 +12,11 @@ public class DriveForward extends Command {
 	MecanumDriveTrain driving;
 	public DriveForward(double time, double speed, MecanumDriveTrain driveTrain)
 	{
+		super("DriveForward");
 		TargetTime = time;
 		Speed = speed;
 		driving = driveTrain;
+		setInterruptible(true);
 	}
 	
 	// Called just before this Command runs the first time

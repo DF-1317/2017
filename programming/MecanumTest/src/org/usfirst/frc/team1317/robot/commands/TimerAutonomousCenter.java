@@ -10,6 +10,9 @@ public class TimerAutonomousCenter extends CommandGroup {
 		addSequential(new DriveForward(2.49,-0.3,drivetrain));
 		addSequential(new Wait(0.5));
 		addSequential(new DeployGear(drivetrain,gearMechanism));
+		addSequential(new StopMotors(drivetrain));
+		setInterruptible(true);
 	}
+	
 	
 }
