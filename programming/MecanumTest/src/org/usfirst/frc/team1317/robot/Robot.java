@@ -192,13 +192,13 @@ public class Robot extends IterativeRobot {
 		}
 		if(AutonomousCommand != null)
 			AutonomousCommand.start();
-		else
+		/*else
 		{
 			AutoCommandMode=false;
 			autonomousInitSteps();
 		}
 		TrackingTimer.reset();
-		TrackingTimer.start();
+		TrackingTimer.start();*/
 	}
 	
 	private void autonomousInitSteps() {
@@ -704,6 +704,13 @@ public class Robot extends IterativeRobot {
 		}
 	}
 
+	
+	@Override
+	public void teleopInit() {
+		if(AutonomousCommand !=null)
+			AutonomousCommand.cancel();
+	}
+	
 	/**
 	 * This function is called periodically during operator control
 	 */

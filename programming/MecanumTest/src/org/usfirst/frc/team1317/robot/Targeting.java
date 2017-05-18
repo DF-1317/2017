@@ -7,17 +7,17 @@ public class Targeting {
 	
 	private int Details = 5;
 	
-	final double TargetX = 137.5; 
+	final double TargetX = 48+105/2; 
 	final int TargetXError = 5;
 	final double DistanceError = 0.03;
-	final int WidthAtTarget = 187;
+	final int WidthAtTarget = 105;
 	final int WidthAtFarthestPoint = 50;
 	final int FarthestPointInches = 104;
 	final double ForwardSpeed = -0.2;
 	final double ForwardSpeed2 = -0.15;
 	final double ForwardSpeed3 = -0.1;
 	final double SlidingSpeed = 0.4;
-	final double TurningSpeed = 0.5;
+	final double TurningSpeed = 0.13;
 	final double TurningCorrectionSpeed = 0.1;
 	
 	
@@ -48,6 +48,7 @@ public class Targeting {
 		{
 			if((double)boundingBox.get("x")==0.0&&(double)boundingBox.get("y")==0.0 && (double)boundingBox.get("w")==0.0)
 			{
+				currentBoundingBox = null;
 				return;
 			}
 			currentBoundingBox = boundingBox;
@@ -56,9 +57,9 @@ public class Targeting {
 	
 	public Boolean adjustCourse()
 	{
-		double turning=0;
-		double sliding=0;
-		double forward=0;
+		double turning=0.0;
+		double sliding=0.0;
+		double forward=0.0;
 		Boolean DoneAligningX=false;
 		Boolean DoneMovingForward=false;
 		if (currentBoundingBox == null)
@@ -66,31 +67,33 @@ public class Targeting {
 			System.out.println("Searching for Target...");
 			if(liftNumber == LeftLift)
 			{
-				driveTrain.drive(-0.3, -0.2, 0);
+				driveTrain.drive(-0.3, -0.2, 0.0);
 			}
 			else if (liftNumber == RightLift)
 			{
-				driveTrain.drive(0.3, -0.2, 0);
+				driveTrain.drive(0.3, -0.2, 0.0);
 			}
 			else if (liftNumber == CenterLift)
 			{
-				if(CenterCounter>600)
+				
+				/*if(CenterCounter>600)
 				{
 					CenterCounter=0;
 				}
 				else if (CenterCounter>450)
 				{
-					driveTrain.drive(-0.2, 0, 0);
+					driveTrain.drive(-0.2, 0.0, 0.0);
 				}
 				else if(CenterCounter>150)
 				{
-					driveTrain.drive(0.2, 0, 0);
+					driveTrain.drive(0.2, 0.0, 0.0);
 				}
 				else
 				{
-					driveTrain.drive(-0.2, 0, 0);
+					driveTrain.drive(-0.2, 0.0, 0.0);
 				}
-				CenterCounter++;
+				CenterCounter++;*/
+				//driveTrain.drive(0.0, 0.0, 0.1);
 			}
 			return false;
 		}
@@ -120,25 +123,28 @@ public class Targeting {
 			}
 			if(Math.abs(xNow-TargetX)<=TargetXError)
 			{
-				turning = 0;
-				sliding = 0;
+				turning = 0.0;
+				sliding = 0.0;
 				DoneAligningX = true;
 			}
 			else if (xNow<TargetX)
 			{
-				sliding = SlidingSpeed;
-				turning = -TurningCorrectionSpeed;
+				//sliding = SlidingSpeed;
+				//turning = -TurningCorrectionSpeed;
+				turning = TurningSpeed;
 			}
 			else if (xNow>TargetX)
 			{
-				sliding = -SlidingSpeed;
-				turning = TurningCorrectionSpeed;
+				//sliding = -SlidingSpeed;
+				//turning = TurningCorrectionSpeed;
+				turning = -TurningSpeed;
 			}
-			_showDetails(3, "sliding: " + sliding + ", forward: " + "turning: " + turning);
-			driveTrain.drive(sliding, forward, turning);
+			_showDetails(3, "sliding: " + sliding + ", forward: " + forward + "turning: " + turning);
+			//driveTrain.drive(sliding, forward, turning);
 			_showDetails(4, "Aligned: " + DoneAligningX + ", Forward: " + DoneMovingForward);
 			if(DoneAligningX&&DoneMovingForward)
 			{
+				driveTrain.drive(0.0, 0.0, 0.0);
 				return true;
 			}
 			else
@@ -150,7 +156,8 @@ public class Targeting {
 	
 	public double estimateDistancetoTarget()
 	{
-		return (WidthAtTarget-(double)currentBoundingBox.get("w"))/(WidthAtTarget-WidthAtFarthestPoint)*FarthestPointInches;
+		return (WidthAtTarget-(double)currentBoundingBox.get("w")) /
+				  (WidthAtTarget-WidthAtFarthestPoint)*FarthestPointInches;
 	}
 	
 	public void setLiftTarget(byte target)

@@ -88,4 +88,8 @@ public class PIDTurning implements PIDOutput {
 		firstTime = true;
 	}
 
+	public void stop() {
+		DriveTrain.drive(0.0, 0.0, 0.0);
+	}
+
 }

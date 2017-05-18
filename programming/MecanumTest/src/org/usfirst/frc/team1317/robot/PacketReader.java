@@ -41,7 +41,7 @@ class PacketReader {
 				DatagramPacket rPacket = new DatagramPacket(rData,rData.length);
 				serverSocket.receive(rPacket);
 				String msg = new String( rPacket.getData() );
-				System.out.println("Got: " + msg);
+				// System.out.println("Got: " + msg);
 				c = JSON.std.mapFrom(msg);
 				System.out.println(c);
 			}
