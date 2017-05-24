@@ -83,10 +83,10 @@ public class Robot extends IterativeRobot {
 		chooser.addDefault("Cross the Baseline", crossingAuto);
 		SmartDashboard.putData("Auto choices", chooser);
 		
-		LoadingStationChooser.addDefault("Auto", AutoLoadingStation);
+		/*LoadingStationChooser.addDefault("Auto", AutoLoadingStation);
 		LoadingStationChooser.addObject("Left Loading Station", LeftLoadingStation);
 		LoadingStationChooser.addObject("Right Loading Station", RightLoadingStation);
-		SmartDashboard.putData("Loading Station",LoadingStationChooser);
+		SmartDashboard.putData("Loading Station",LoadingStationChooser);*/
 		
 		VisionTrackingChooser.addDefault("Vision Tracking On", VisionTrackingOn);
 		VisionTrackingChooser.addObject("Vision Tracking Off", VisionTrackingOff);
@@ -128,7 +128,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		autoSelected = chooser.getSelected();
+		/*autoSelected = chooser.getSelected();
 		loadingStationSelected = LoadingStationChooser.getSelected();
 		VisionTracking = VisionTrackingChooser.getSelected();
 		if(loadingStationSelected == AutoLoadingStation)
@@ -145,7 +145,7 @@ public class Robot extends IterativeRobot {
 		else
 		{
 			LoadingStation = loadingStationSelected;
-		}
+		}*/
 		System.out.println("Auto selected: " + autoSelected);
 		if(AutoCommandMode)
 		{
