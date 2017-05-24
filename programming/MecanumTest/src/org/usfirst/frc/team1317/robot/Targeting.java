@@ -7,10 +7,10 @@ public class Targeting {
 	
 	private int Details = 5;
 	
-	final double TargetX = 48+105/2; 
+	final double TargetX = 18+207/2; //x +w/2 at target 
 	final int TargetXError = 5;
 	final double DistanceError = 0.03;
-	final int WidthAtTarget = 105;
+	final int WidthAtTarget = 207;
 	final int WidthAtFarthestPoint = 50;
 	final int FarthestPointInches = 104;
 	final double ForwardSpeed = -0.2;
