@@ -128,10 +128,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		/*autoSelected = chooser.getSelected();
-		loadingStationSelected = LoadingStationChooser.getSelected();
+		autoSelected = chooser.getSelected();
+		//loadingStationSelected = LoadingStationChooser.getSelected();
 		VisionTracking = VisionTrackingChooser.getSelected();
-		if(loadingStationSelected == AutoLoadingStation)
+		/*if(loadingStationSelected == AutoLoadingStation)
 		{
 			if(driverStation.getAlliance()==DriverStation.Alliance.Blue)
 			{
@@ -809,5 +809,4 @@ public class Robot extends IterativeRobot {
 		}
 		return lastAlignment;
 	}
-
 }
