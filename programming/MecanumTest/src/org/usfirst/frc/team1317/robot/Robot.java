@@ -78,8 +78,8 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		// some default code for autonomous selection
 		chooser.addObject("Center", centerAuto);
-		chooser.addObject("Left", leftAuto);
-		chooser.addObject("Right", rightAuto);
+		//chooser.addObject("Left", leftAuto);
+		//chooser.addObject("Right", rightAuto);
 		chooser.addDefault("Cross the Baseline", crossingAuto);
 		SmartDashboard.putData("Auto choices", chooser);
 		
@@ -88,8 +88,8 @@ public class Robot extends IterativeRobot {
 		LoadingStationChooser.addObject("Right Loading Station", RightLoadingStation);
 		SmartDashboard.putData("Loading Station",LoadingStationChooser);*/
 		
-		VisionTrackingChooser.addDefault("Vision Tracking On", VisionTrackingOn);
-		VisionTrackingChooser.addObject("Vision Tracking Off", VisionTrackingOff);
+		//VisionTrackingChooser.addDefault("Vision Tracking On", VisionTrackingOn);
+		VisionTrackingChooser.addDefault("Vision Tracking Off", VisionTrackingOff);
 		SmartDashboard.putData("Vision Tracking",VisionTrackingChooser);
 
 		// initializes the NavX-MXP
