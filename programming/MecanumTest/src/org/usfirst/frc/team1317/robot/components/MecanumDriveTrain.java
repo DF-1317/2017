@@ -1,12 +1,14 @@
 package org.usfirst.frc.team1317.robot.components;
 
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.internal.HardwareTimer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team1317.robot.*;
 import com.ctre.*;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.*;
 
 public class MecanumDriveTrain implements RobotComponent {
@@ -16,10 +18,10 @@ public class MecanumDriveTrain implements RobotComponent {
 	
 	
 	//variables to hold motor controller objects.
-	CANTalon FLMotor;
-	CANTalon FRMotor;
-	CANTalon BLMotor;
-	CANTalon BRMotor;
+	WPI_TalonSRX FLMotor;
+	WPI_TalonSRX FRMotor;
+	WPI_TalonSRX BLMotor;
+	WPI_TalonSRX BRMotor;
 	
 	//variable to hold what drive mode we are in
 	//0 is mecanum with two joysticks. One for turning and one for moving.
@@ -34,7 +36,7 @@ public class MecanumDriveTrain implements RobotComponent {
 	Boolean oldTurnButton11State;
 	
 	//object to control the drivetrain.
-	RobotDrive Drivetrain;
+	MecanumDrive Drivetrain;
 
 	//the joysticks that control the motor
 	Joystick TurnJoystick;
@@ -65,13 +67,13 @@ public class MecanumDriveTrain implements RobotComponent {
 	public MecanumDriveTrain(Joystick move, Joystick turn, AHRS NavX) //add AHRS Navx to the code
 	{
 		//Initializes motor objects
-		FLMotor = new CANTalon (RobotPorts.FLMotorPort);
-		FRMotor = new CANTalon (RobotPorts.FRMotorPort);
-		BLMotor = new CANTalon (RobotPorts.BLMotorPort);
-		BRMotor = new CANTalon (RobotPorts.BRMotorPort);
-		FRMotor.setInverted(true);
-		BRMotor.setInverted(true);
-		Drivetrain = new RobotDrive(FLMotor,BLMotor,FRMotor,BRMotor);
+		FLMotor = new WPI_TalonSRX (RobotPorts.FLMotorPort);
+		FRMotor = new WPI_TalonSRX (RobotPorts.FRMotorPort);
+		BLMotor = new WPI_TalonSRX (RobotPorts.BLMotorPort);
+		BRMotor = new WPI_TalonSRX (RobotPorts.BRMotorPort);
+		FRMotor.setInverted(false);
+		BRMotor.setInverted(false);
+		Drivetrain = new MecanumDrive(FLMotor,BLMotor,FRMotor,BRMotor);
 		//sets the drive mode to the default
 		driveMode=0;
 		MoveJoystick=move;
@@ -190,10 +192,10 @@ public class MecanumDriveTrain implements RobotComponent {
 		if(driveMode == 0) {
 			//use one joystick to move the robot forward and sideways. Move the other joystick sideways to turn
 			if(!motorsReversed) {
-				Drivetrain.mecanumDrive_Cartesian(speedMultiplier*MoveJoystick.getX(), speedMultiplier*MoveJoystick.getY(), speedMultiplier*TurnJoystick.getX(), 0);
+				Drivetrain.driveCartesian(speedMultiplier*MoveJoystick.getX(), speedMultiplier*MoveJoystick.getY(), speedMultiplier*TurnJoystick.getX(), 0);
 			}
 			else {
-				Drivetrain.mecanumDrive_Cartesian(-speedMultiplier*MoveJoystick.getX(), -speedMultiplier*MoveJoystick.getY(), -speedMultiplier*TurnJoystick.getX(), 0);
+				Drivetrain.driveCartesian(-speedMultiplier*MoveJoystick.getX(), -speedMultiplier*MoveJoystick.getY(), -speedMultiplier*TurnJoystick.getX(), 0);
 			}
 				
 		}
@@ -201,15 +203,15 @@ public class MecanumDriveTrain implements RobotComponent {
 			//use one joystick to move the robot. Forward, backward, and side to side move the robot in that direction
 			//twisting the joystick makes the robot twist
 			if(!motorsReversed) {
-				Drivetrain.mecanumDrive_Cartesian(speedMultiplier*MoveJoystick.getX(), speedMultiplier*MoveJoystick.getY(), speedMultiplier*MoveJoystick.getTwist(), 0);
+				Drivetrain.driveCartesian(speedMultiplier*MoveJoystick.getX(), speedMultiplier*MoveJoystick.getY(), speedMultiplier*MoveJoystick.getTwist(), 0);
 			}
 			else {
-				Drivetrain.mecanumDrive_Cartesian(-speedMultiplier*MoveJoystick.getX(), -speedMultiplier*MoveJoystick.getY(), -speedMultiplier*MoveJoystick.getTwist(), 0);
+				Drivetrain.driveCartesian(-speedMultiplier*MoveJoystick.getX(), -speedMultiplier*MoveJoystick.getY(), -speedMultiplier*MoveJoystick.getTwist(), 0);
 			}
 		}
 		else {
 			//drive the robot with tank drive. Use one joystick to control the left motor and one to control the right motor.
-			Drivetrain.tankDrive(speedMultiplier*MoveJoystick.getY(), speedMultiplier*TurnJoystick.getY());
+			//Drivetrain.tankDrive(speedMultiplier*MoveJoystick.getY(), speedMultiplier*TurnJoystick.getY());
 		}
 		
 		//the current button states are now the old button states.
@@ -254,7 +256,7 @@ public class MecanumDriveTrain implements RobotComponent {
 		//if we have already traveled far enough return that we have traveled that far.
 		if (distancetravelled>=distance) {
 			//stop moving
-			Drivetrain.mecanumDrive_Cartesian(0, 0, 0, 0);
+			Drivetrain.driveCartesian(0, 0, 0, 0);
 			//tell the code that we are done.
 			return true;
 		}
@@ -263,14 +265,14 @@ public class MecanumDriveTrain implements RobotComponent {
 			//if we have not got there yet keep driving.
 			//I will need to multiply the acceleration by a variable.
 			//drives forward at the correct speed and corrects for drifting sideways and turning.
-			Drivetrain.mecanumDrive_Cartesian(-turningConstant*accel.getZ(), speed, -turningConstant*(gyro.getYaw()-heading), 0); //the input after speed should be a gyro sensors angle multiplied by a constant (the robot should turn in the opposite direction than it is currently driving so it drives straight)
+			Drivetrain.driveCartesian(-turningConstant*accel.getZ(), speed, -turningConstant*(gyro.getYaw()-heading), 0); //the input after speed should be a gyro sensors angle multiplied by a constant (the robot should turn in the opposite direction than it is currently driving so it drives straight)
 			return false;
 		}
 	}
 	//stops the drivetrain, resets the distance traveled, stops the motors and sets the velocity to zero.
 	public void resetDistance() {
 		distancetravelled = 0;
-		Drivetrain.mecanumDrive_Cartesian(0, 0, 0, 0);
+		Drivetrain.driveCartesian(0, 0, 0, 0);
 		oldVelocity = 0;
 		oldAcceleration = 0;
 		velocity = 0;
@@ -286,7 +288,7 @@ public class MecanumDriveTrain implements RobotComponent {
 	{
 		if(degrees>gyro.getYaw())
 		{
-			Drivetrain.mecanumDrive_Cartesian(0, 0, speed, 0);
+			Drivetrain.driveCartesian(0, 0, speed, 0);
 			return false;
 		}
 		else if (degrees==gyro.getYaw())
@@ -295,7 +297,7 @@ public class MecanumDriveTrain implements RobotComponent {
 		}
 		else
 		{
-			Drivetrain.mecanumDrive_Cartesian(0, 0, -speed, 0);
+			Drivetrain.driveCartesian(0, 0, -speed, 0);
 			return false;
 		}
 	}
@@ -326,7 +328,7 @@ public class MecanumDriveTrain implements RobotComponent {
 	
 	public void drive(double x,double y, double rotation)
 	{
-		Drivetrain.mecanumDrive_Cartesian(x, y, rotation, 0);
+		Drivetrain.driveCartesian(x, y, rotation, 0);
 	}
 	
 	

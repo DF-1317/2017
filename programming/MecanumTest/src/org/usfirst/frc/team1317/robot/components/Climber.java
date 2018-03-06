@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team1317.robot.*;
 import com.ctre.*;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 /**
  * This code represents the Climber on the robot
  * This code will most likely be changed such that buttons will be used instead of a joystick
@@ -12,16 +13,16 @@ import com.ctre.*;
 public class Climber implements RobotComponent {
 	
 	//variable(s) to hold motor controller objects and determine what joystick will be used.
-	CANTalon CMotor;
+	WPI_TalonSRX CMotor;
 	
 	Joystick OtherJoystick;
 	
 	public Climber(Joystick j)
 	{
 		//This method should initialize everything (similar to RobotInit())
-		CMotor = new CANTalon (RobotPorts.CMotorPort);
+		CMotor = new WPI_TalonSRX (RobotPorts.CMotorPort);
 		OtherJoystick=j;
-		SmartDashboard.putNumber("Climber Voltage", CMotor.getOutputVoltage());
+		//SmartDashboard.putNumber("Climber Voltage", CMotor.getOutputVoltage());
 		SmartDashboard.putNumber("Climber Current", CMotor.getOutputCurrent());
 	}
 
@@ -48,11 +49,10 @@ public class Climber implements RobotComponent {
 		double speedMultiplier = 1; //0.45*throttle+0.55; 
 		double forward = speedMultiplier * OtherJoystick.getY();
 		CMotor.set(forward);
-		if (CMotor.getOutputCurrent()>40)
-		{
-			CMotor.set(0);
+		if(CMotor.getOutputCurrent() > 40.0) {
+			CMotor.set(0.0);
 		}
-		SmartDashboard.putNumber("Climber Voltage", CMotor.getOutputVoltage());
+		//SmartDashboard.putNumber("Climber Voltage", CMotor.getOutputVoltage());
 		SmartDashboard.putNumber("Climber Current", CMotor.getOutputCurrent());
 
 	}
